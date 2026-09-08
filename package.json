@@ -1,0 +1,19 @@
+{
+  "name": "factloom",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Auditable cross-document fact reconciliation engine",
+  "scripts": {
+    "dev": "concurrently --names \"BACKEND,FRONTEND\" --prefix-colors \"cyan,magenta\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": ".venv\\Scripts\\python -m uvicorn backend.api.app:app --reload --port 8000",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "install:all": "pip install -r requirements.txt && npm install --prefix frontend",
+    "test": ".venv\\Scripts\\python -m pytest tests/ -q",
+    "eval": ".venv\\Scripts\\python eval/run_eval.py",
+    "seed": ".venv\\Scripts\\python -m backend.query.seed_cases",
+    "docs": ".venv\\Scripts\\python scripts/generate_docx.py"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
