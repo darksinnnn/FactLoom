@@ -838,5 +838,444 @@
         139.63
       ]
     }
+  ],
+  "apple_p1": [
+    {
+      "entity_mention": "real_out_of_corpus.pdf",
+      "metric_mention": "Products",
+      "value": "298,085",
+      "unit": "USD",
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Products net sales were $298,085.",
+      "quote_span": "$ \n298,085",
+      "confidence": 0.98,
+      "page_number": 1,
+      "bbox": [
+        52.08,
+        143.88,
+        563.51,
+        166.55
+      ]
+    },
+    {
+      "entity_mention": "real_out_of_corpus.pdf",
+      "metric_mention": "Total net sales (1)",
+      "value": "383,285",
+      "unit": "USD",
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Total net sales were $383,285.",
+      "quote_span": "$ \n383,285",
+      "confidence": 0.98,
+      "page_number": 1,
+      "bbox": [
+        49.44,
+        615.24,
+        563.36,
+        653.51
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "Total operating expenses",
+      "value": "54,847",
+      "unit": "currency",
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Total operating expenses were $54,847 in the latest full-year period.",
+      "quote_span": "54,847",
+      "confidence": 0.97,
+      "page_number": 1,
+      "bbox": [
+        49.44,
+        315.72,
+        562.75,
+        351.83
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "Operating income",
+      "value": "114,301",
+      "unit": "currency",
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Operating income amounted to $114,301 in the latest full-year period.",
+      "quote_span": "114,301",
+      "confidence": 0.97,
+      "page_number": 1,
+      "bbox": [
+        52.08,
+        343.56,
+        564.58,
+        366.23
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "Other income/(expense), net",
+      "value": "(565)",
+      "unit": "currency",
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Net other income/(expense) was a loss of $565 in the latest full-year period.",
+      "quote_span": "(565)",
+      "confidence": 0.96,
+      "page_number": 1,
+      "bbox": [
+        52.08,
+        357.72,
+        564.58,
+        380.39
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "Income before provision for income taxes",
+      "value": "113,736",
+      "unit": "currency",
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Income before provision for income taxes was $113,736 in the latest full-year period.",
+      "quote_span": "113,736",
+      "confidence": 0.97,
+      "page_number": 1,
+      "bbox": [
+        52.08,
+        372.84,
+        564.58,
+        394.55
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "Provision for income taxes",
+      "value": "16,741",
+      "unit": "currency",
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Provision for income taxes amounted to $16,741 in the latest full-year period.",
+      "quote_span": "16,741",
+      "confidence": 0.97,
+      "page_number": 1,
+      "bbox": [
+        52.08,
+        386.28,
+        564.58,
+        408.95
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "Net income",
+      "value": "96,995",
+      "unit": "currency",
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Net income was $96,995 in the latest full-year period.",
+      "quote_span": "$ \n96,995",
+      "confidence": 0.97,
+      "page_number": 1,
+      "bbox": [
+        49.44,
+        401.4,
+        563.55,
+        450.71
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "Basic earnings per share",
+      "value": "6.16",
+      "unit": "currency",
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Basic earnings per share were $6.16 in the latest full-year period.",
+      "quote_span": "$ \n6.16",
+      "confidence": 0.96,
+      "page_number": 1,
+      "bbox": [
+        70.08,
+        443.16,
+        564.58,
+        466.07
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "Diluted earnings per share",
+      "value": "6.13",
+      "unit": "currency",
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Diluted earnings per share were $6.13 in the latest full-year period.",
+      "quote_span": "$ \n6.13",
+      "confidence": 0.96,
+      "page_number": 1,
+      "bbox": [
+        70.08,
+        457.56,
+        564.58,
+        480.23
+      ]
+    },
+    {
+      "entity_mention": "real_out_of_corpus.pdf",
+      "metric_mention": "Basic",
+      "value": "15,744,231",
+      "unit": null,
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Basic sales amount to 15,744,231.",
+      "quote_span": "15,744,231",
+      "confidence": 0.97,
+      "page_number": 1,
+      "bbox": [
+        70.08,
+        486.12,
+        564.58,
+        508.79
+      ]
+    },
+    {
+      "entity_mention": "real_out_of_corpus.pdf",
+      "metric_mention": "Diluted",
+      "value": "15,812,547",
+      "unit": null,
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Diluted sales total 15,812,547.",
+      "quote_span": "15,812,547",
+      "confidence": 0.97,
+      "page_number": 1,
+      "bbox": [
+        49.44,
+        500.28,
+        564.58,
+        536.39
+      ]
+    },
+    {
+      "entity_mention": "real_out_of_corpus.pdf",
+      "metric_mention": "Americas",
+      "value": "162,560",
+      "unit": "USD",
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": "(1) Net sales by reportable segment",
+      "claim_text": "Net sales in the Americas segment are $162,560.",
+      "quote_span": "$ \n162,560",
+      "confidence": 0.97,
+      "page_number": 1,
+      "bbox": [
+        70.08,
+        543.24,
+        564.58,
+        565.91
+      ]
+    },
+    {
+      "entity_mention": "real_out_of_corpus.pdf",
+      "metric_mention": "Europe",
+      "value": "94,294",
+      "unit": null,
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": "(1) Net sales by reportable segment",
+      "claim_text": "Net sales in Europe are 94,294.",
+      "quote_span": "94,294",
+      "confidence": 0.97,
+      "page_number": 1,
+      "bbox": [
+        70.08,
+        557.4,
+        563.4,
+        580.31
+      ]
+    },
+    {
+      "entity_mention": "real_out_of_corpus.pdf",
+      "metric_mention": "Greater China",
+      "value": "72,559",
+      "unit": null,
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": "(1) Net sales by reportable segment",
+      "claim_text": "Net sales in Greater China are 72,559.",
+      "quote_span": "72,559",
+      "confidence": 0.97,
+      "page_number": 1,
+      "bbox": [
+        70.08,
+        571.8,
+        564.58,
+        594.47
+      ]
+    },
+    {
+      "entity_mention": "real_out_of_corpus.pdf",
+      "metric_mention": "Japan",
+      "value": "24,257",
+      "unit": null,
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": "(1) Net sales by reportable segment",
+      "claim_text": "Net sales in Japan are 24,257.",
+      "quote_span": "24,257",
+      "confidence": 0.97,
+      "page_number": 1,
+      "bbox": [
+        70.08,
+        585.96,
+        564.58,
+        608.87
+      ]
+    },
+    {
+      "entity_mention": "real_out_of_corpus.pdf",
+      "metric_mention": "Rest of Asia Pacific",
+      "value": "29,615",
+      "unit": null,
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": "(1) Net sales by reportable segment",
+      "claim_text": "Net sales in Rest of Asia Pacific are 29,615.",
+      "quote_span": "29,615",
+      "confidence": 0.97,
+      "page_number": 1,
+      "bbox": [
+        70.08,
+        600.36,
+        564.58,
+        623.03
+      ]
+    },
+    {
+      "entity_mention": "real_out_of_corpus.pdf",
+      "metric_mention": "Total net sales",
+      "value": "383,285",
+      "unit": "USD",
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": "(1) Net sales by reportable segment",
+      "claim_text": "Total net sales amount to $383,285.",
+      "quote_span": "$ \n383,285",
+      "confidence": 0.97,
+      "page_number": 1,
+      "bbox": [
+        49.44,
+        615.24,
+        563.36,
+        653.51
+      ]
+    },
+    {
+      "entity_mention": "Apple",
+      "metric_mention": "iPhone",
+      "value": "200,583",
+      "unit": "USD",
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Apple's iPhone net sales were $200,583 million in the latest full-year period.",
+      "quote_span": "$ \n200,583",
+      "confidence": 0.97,
+      "page_number": 1,
+      "bbox": [
+        70.08,
+        657.24,
+        563.37,
+        679.91
+      ]
+    },
+    {
+      "entity_mention": "Apple",
+      "metric_mention": "Mac",
+      "value": "29,357",
+      "unit": "USD",
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Apple's Mac net sales amounted to $29,357 million for the latest full-year period.",
+      "quote_span": "29,357",
+      "confidence": 0.96,
+      "page_number": 1,
+      "bbox": [
+        70.08,
+        671.4,
+        564.58,
+        694.31
+      ]
+    },
+    {
+      "entity_mention": "Apple",
+      "metric_mention": "iPad",
+      "value": "28,300",
+      "unit": "USD",
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Apple's iPad net sales were $28,300 million in the latest full-year period.",
+      "quote_span": "28,300",
+      "confidence": 0.96,
+      "page_number": 1,
+      "bbox": [
+        70.08,
+        685.8,
+        562.95,
+        707.51
+      ]
+    },
+    {
+      "entity_mention": "Apple",
+      "metric_mention": "Wearables, Home and Accessories",
+      "value": "39,845",
+      "unit": "USD",
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Apple reported $39,845 million in net sales for Wearables, Home and Accessories in the latest full-year period.",
+      "quote_span": "39,845",
+      "confidence": 0.96,
+      "page_number": 1,
+      "bbox": [
+        70.08,
+        699.96,
+        563.17,
+        722.87
+      ]
+    },
+    {
+      "entity_mention": "Apple",
+      "metric_mention": "Services",
+      "value": "85,200",
+      "unit": "USD",
+      "period_mention": null,
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Apple's Services net sales totaled $85,200 million for the latest full-year period.",
+      "quote_span": "85,200",
+      "confidence": 0.96,
+      "page_number": 1,
+      "bbox": [
+        52.08,
+        158.04,
+        563.0,
+        180.71
+      ]
+    }
   ]
 }

@@ -50,22 +50,7 @@ def run_calibration_checks(db_path: str) -> Dict[str, bool]:
         "same_ebitda_vs_cr": same_ok
     }
 
-def create_out_of_corpus_pdf(file_path: str) -> str:
-    """Create a clean 1-page out-of-corpus PDF to test dynamic schema generalization."""
-    doc = pymupdf.open()
-    page = doc.new_page(width=612, height=792)
-    
-    content = (
-        "Acme Global Technologies Inc. - Q3 2025 Financial Summary\n\n"
-        "Acme Global Technologies Inc. announced its financial results for Q3 2025.\n"
-        "Total Cloud Subscription Revenue was $840.50 million, representing a 22.4% increase year-over-year.\n"
-        "Operating Margin for Q3 2025 was 24.5% compared to 21.0% in Q3 2024.\n"
-        "The company reported Total Headcount of 12,450 permanent employees as of September 30, 2025.\n"
-    )
-    page.insert_text((50, 72), content, fontsize=12)
-    doc.save(file_path)
-    doc.close()
-    return file_path
+REAL_OUT_OF_CORPUS_PDF = os.path.join(os.path.dirname(__file__), "..", "..", "uploads", "real_out_of_corpus.pdf")
 
 def main():
     print("=" * 60)
@@ -79,10 +64,11 @@ def main():
 
     # Clean up any residual observations from previous runs on these specific test pages
     with conn:
-        conn.execute("DELETE FROM observations WHERE document_id IN (?, ?, 'doc_out_of_corpus_acme')", (DELHIVERY_AR_DOC_ID, DELHIVERY_DECK_DOC_ID))
+        conn.execute("DELETE FROM observations WHERE document_id IN (?, ?, 'doc_out_of_corpus_apple', 'doc_out_of_corpus_acme')", (DELHIVERY_AR_DOC_ID, DELHIVERY_DECK_DOC_ID))
         conn.execute("DELETE FROM facts WHERE id NOT IN (SELECT fact_id FROM observations)")
-        conn.execute("DELETE FROM pages WHERE document_id = 'doc_out_of_corpus_acme'")
-        conn.execute("DELETE FROM documents WHERE id = 'doc_out_of_corpus_acme'")
+        conn.execute("DELETE FROM pages WHERE document_id IN ('doc_out_of_corpus_apple', 'doc_out_of_corpus_acme')")
+        conn.execute("DELETE FROM documents WHERE id IN ('doc_out_of_corpus_apple', 'doc_out_of_corpus_acme')")
+
 
     # Step 1: Calibration Gate
     print("\n[STEP 1] Running Calibration Checks...")
@@ -221,61 +207,75 @@ def main():
             print(f"    - Doc: {obs['filename']} (p.{obs['page_number']}) | Value: {obs['value']} {obs['unit'] or ''} | Quote: '{obs['quote_span']}'")
 
     # Step 4: Generalization Test (Out-of-corpus Document)
-    print("\n[STEP 4] Generalization Test on Out-of-Corpus Document...")
-    with tempfile.TemporaryDirectory() as tmpdir:
-        pdf_path = os.path.join(tmpdir, "acme_q3_2025.pdf")
-        create_out_of_corpus_pdf(pdf_path)
+    print("\n[STEP 4] Generalization Test on Genuine External Document (Apple Inc. FY24 Q4 Consolidated Statements)...")
+    if not os.path.exists(REAL_OUT_OF_CORPUS_PDF):
+        raise FileNotFoundError(f"External test PDF not found at {REAL_OUT_OF_CORPUS_PDF}")
 
-        parser = PDFParser()
-        acme_pages = parser.parse(pdf_path)
-        acme_cands = extractor.extract_from_page(acme_pages[0])
-        print(f"  Extracted {len(acme_cands)} candidates from out-of-corpus PDF.")
+    parser = PDFParser()
+    apple_pages = parser.parse(REAL_OUT_OF_CORPUS_PDF)
 
-        # Register out-of-corpus doc and page in DB for foreign key integrity
-        with conn:
-            conn.execute("""
-                INSERT OR REPLACE INTO documents (id, filename, doc_type_guess, uploaded_at, page_count, file_path)
-                VALUES ('doc_out_of_corpus_acme', 'acme_q3_2025.pdf', 'financial_report', '2025-10-15T00:00:00Z', 1, ?)
-            """, (pdf_path,))
-            conn.execute("""
-                INSERT OR REPLACE INTO pages (id, document_id, page_number, width, height, text_blocks, table_blocks, full_text)
-                VALUES ('page_acme_1', 'doc_out_of_corpus_acme', 1, 612.0, 792.0, '[]', '[]', ?)
-            """, (acme_pages[0].full_text,))
+    if "apple_p1" in cached_data:
+        print("  [CACHE] Loading verified Phase 2 extraction candidates for Apple p.1...")
+        apple_cands = cached_data["apple_p1"]
+    else:
+        print("  Extracting Apple p.1 candidates with Groq...")
+        apple_cands = extractor.extract_from_page(apple_pages[0], doc_filename="real_out_of_corpus.pdf")
+        cached_data["apple_p1"] = apple_cands
+        try:
+            with open(cache_path, "w", encoding="utf-8") as f:
+                json.dump(cached_data, f, indent=2)
+        except Exception:
+            pass
 
-        # Ingest
-        acme_obs = fact_service.ingest_observations(
-            extracted_candidates=acme_cands,
-            document_id="doc_out_of_corpus_acme",
-            page_number=1,
-            page_id="page_acme_1",
-            doc_vintage_date="2025-10-15",
-            default_entity="Acme Global Technologies Inc."
-        )
-        print(f"  Ingested {len(acme_obs)} observations.")
+    print(f"  Grounded candidates for out-of-corpus document: {len(apple_cands)}")
 
-        # Check newly created entities and metrics
-        acme_ents = conn.execute("""
-            SELECT id, canonical_name FROM entities WHERE canonical_name LIKE '%Acme%'
-        """).fetchall()
-        acme_mets = conn.execute("""
-            SELECT DISTINCT m.id, m.canonical_name 
-            FROM metrics m
-            JOIN facts f ON m.id = f.metric_id
-            JOIN observations o ON f.id = o.fact_id
-            WHERE o.document_id = 'doc_out_of_corpus_acme'
-        """).fetchall()
+    # Register out-of-corpus doc and page in DB for foreign key integrity
+    with conn:
+        conn.execute("""
+            INSERT OR REPLACE INTO documents (id, filename, doc_type_guess, uploaded_at, page_count, file_path)
+            VALUES ('doc_out_of_corpus_apple', 'real_out_of_corpus.pdf', 'financial_report', '2024-10-31T00:00:00Z', 4, ?)
+        """, (REAL_OUT_OF_CORPUS_PDF,))
+        conn.execute("""
+            INSERT OR REPLACE INTO pages (id, document_id, page_number, width, height, text_blocks, table_blocks, full_text)
+            VALUES ('page_apple_1', 'doc_out_of_corpus_apple', 1, 612.0, 792.0, '[]', '[]', ?)
+        """, (apple_pages[0].full_text,))
 
-        print(f"  New Entities created: {[e['canonical_name'] for e in acme_ents]}")
-        print(f"  New Metrics created:  {[m['canonical_name'] for m in acme_mets]}")
-        generalization_pass = len(acme_ents) > 0 and len(acme_mets) > 0 and all(m["canonical_name"] != "EBITDA" for m in acme_mets)
+    # Ingest
+    apple_obs = fact_service.ingest_observations(
+        extracted_candidates=apple_cands,
+        document_id="doc_out_of_corpus_apple",
+        page_number=1,
+        page_id="page_apple_1",
+        doc_vintage_date="2024-10-31",
+        default_entity="Apple Inc."
+    )
+    print(f"  Ingested {len(apple_obs)} observations into FactService.")
+
+    # Check newly created entities and metrics
+    apple_ents = conn.execute("""
+        SELECT id, canonical_name FROM entities WHERE canonical_name LIKE '%Apple%'
+    """).fetchall()
+    apple_mets = conn.execute("""
+        SELECT DISTINCT m.id, m.canonical_name 
+        FROM metrics m
+        JOIN facts f ON m.id = f.metric_id
+        JOIN observations o ON f.id = o.fact_id
+        WHERE o.document_id = 'doc_out_of_corpus_apple'
+    """).fetchall()
+
+    print(f"  New Entities created: {[e['canonical_name'] for e in apple_ents]}")
+    print(f"  New Metrics created:  {[m['canonical_name'] for m in apple_mets]}")
+    generalization_pass = len(apple_ents) > 0 and len(apple_mets) > 0 and all(m["canonical_name"] != "EBITDA" for m in apple_mets)
 
     # Step 5: Audit Trail Verification
-    print("\n[STEP 5] Inspecting registry_decisions Audit Trail...")
+    print("\n[STEP 5] Inspecting registry_decisions Audit Trail & Model Provenance...")
     total_decisions = conn.execute("SELECT COUNT(*) FROM registry_decisions").fetchone()[0]
+    distinct_models = [r[0] for r in conn.execute("SELECT DISTINCT model_used FROM registry_decisions WHERE model_used IS NOT NULL").fetchall()]
     print(f"  Total decisions logged: {total_decisions}")
+    print(f"  Models recorded in audit trail: {distinct_models}")
 
     sample_decisions = conn.execute("""
-        SELECT mention_text, target_type, decision_type, similarity_score, llm_reasoning
+        SELECT mention_text, target_type, decision_type, similarity_score, llm_reasoning, model_used
         FROM registry_decisions
         ORDER BY created_at DESC
         LIMIT 6
@@ -284,7 +284,8 @@ def main():
     print("\n  Sample Decisions:")
     for d in sample_decisions:
         sim = f"{d['similarity_score']:.4f}" if d['similarity_score'] is not None else "N/A"
-        print(f"    [{d['target_type'].upper()}] '{d['mention_text']}' -> {d['decision_type']} (sim: {sim})")
+        model_tag = d['model_used'] or "deterministic"
+        print(f"    [{d['target_type'].upper()}] '{d['mention_text']}' -> {d['decision_type']} (sim: {sim}, model: {model_tag})")
         print(f"      Reasoning: {d['llm_reasoning']}")
 
     conn.close()
@@ -295,8 +296,8 @@ def main():
     print(f"EBITDA vs Adjusted EBITDA calibration: {'distinct' if cal_res['distinct_ebitda_vs_adj'] else 'FAILED (merged)'}")
     print(f"EBITDA aliasing calibration:           {'merged' if cal_res['same_ebitda_vs_cr'] else 'FAILED (distinct)'}")
     print(f"AR+deck EBITDA -> single Fact, two Observations: {'yes' if corroboration_pass else 'no'}")
-    print(f"Out-of-corpus PDF test run:            {'yes, acme_q3_2025.pdf, new entries created: ' + str(len(acme_ents) + len(acme_mets)) if generalization_pass else 'no'}")
-    print(f"registry_decisions non-empty with real reasoning: {'yes (' + str(total_decisions) + ' rows logged)' if total_decisions > 0 else 'no'}")
+    print(f"Out-of-corpus PDF test run:            {'yes, uploads/real_out_of_corpus.pdf (Apple Inc. FY24 Q4 Statements), new entries: ' + str(len(apple_ents) + len(apple_mets)) if generalization_pass else 'no'}")
+    print(f"registry_decisions non-empty with real reasoning: {'yes (' + str(total_decisions) + ' rows logged, models: ' + ', '.join(distinct_models) + ')' if total_decisions > 0 else 'no'}")
     
     gate_status = (
         cal_res['distinct_ebitda_vs_adj'] and
@@ -313,3 +314,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

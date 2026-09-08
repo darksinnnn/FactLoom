@@ -15,7 +15,7 @@ import logging
 from datetime import datetime
 from typing import Optional, List, Dict, Any, Tuple
 
-from backend.store.db import get_connection
+from backend.store.db import get_connection, init_db
 from backend.canonicalize.embedder import EmbeddingEngine
 from backend.canonicalize.prompts.canonicalize_prompt import (
     CANONICALIZE_SYSTEM_PROMPT,
@@ -41,6 +41,7 @@ class RegistryEngine:
         lower_threshold: float = 0.65
     ):
         self.db_path = db_path
+        init_db(self.db_path)
         self.client = groq_client or GroqClient()
         self.embedder = embedder or EmbeddingEngine.get_instance()
         self.upper_threshold = upper_threshold
@@ -50,6 +51,7 @@ class RegistryEngine:
         self._metrics_cache: List[Dict[str, Any]] = []
         self._decision_cache: Dict[str, Tuple[str, str]] = {}
         self._load_caches()
+
 
     def _load_caches(self) -> None:
         """Load existing entities and metrics into in-memory vector cache."""
@@ -136,7 +138,8 @@ class RegistryEngine:
         target_type: str,
         decision_type: str,
         similarity_score: float,
-        llm_reasoning: Optional[str] = None
+        llm_reasoning: Optional[str] = None,
+        model_used: str = "deterministic"
     ) -> None:
         """Persist resolution audit record to registry_decisions table."""
         conn = get_connection(self.db_path)
@@ -148,12 +151,12 @@ class RegistryEngine:
                     INSERT INTO registry_decisions (
                         id, mention_text, resolved_entity_or_metric_id,
                         target_type, decision_type, similarity_score,
-                        llm_reasoning, created_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                        llm_reasoning, model_used, created_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     decision_id, mention_text, resolved_id,
                     target_type, decision_type, similarity_score,
-                    llm_reasoning, created_at
+                    llm_reasoning, model_used, created_at
                 ))
         finally:
             conn.close()
@@ -236,6 +239,7 @@ class RegistryEngine:
             for s, e in ranked[:3]
         ]
         decision = self._adjudicate_with_llm("entity", cleaned, candidates, claim_context=context)
+        model_used = decision.get("_model_used", "deterministic")
 
         if decision.get("decision") == "alias_of" and decision.get("matched_id"):
             matched_id = decision["matched_id"]
@@ -246,13 +250,14 @@ class RegistryEngine:
                 target_type="entity",
                 decision_type="llm_adjudicated",
                 similarity_score=top_sim,
-                llm_reasoning=decision.get("reason", "LLM determined alias of existing entity")
+                llm_reasoning=decision.get("reason", "LLM determined alias of existing entity"),
+                model_used=model_used
             )
             return matched_ent["id"], matched_ent["canonical_name"]
         else:
             canonical_name = decision.get("canonical_name") or cleaned
             reason = decision.get("reason", "LLM determined distinct new entity entry")
-            return self._create_new_entity(canonical_name, emb, mention_text, reason, top_sim, is_llm=True)
+            return self._create_new_entity(canonical_name, emb, mention_text, reason, top_sim, is_llm=True, model_used=model_used)
 
     def resolve_metric(
         self,
@@ -269,9 +274,10 @@ class RegistryEngine:
         if not cleaned:
             cleaned = raw_mention or "Unknown Metric"
 
-        cache_key = f"metric:{cleaned.lower()}"
+        cache_key = f"metric:{raw_mention.lower()}"
         if cache_key in self._decision_cache:
             return self._decision_cache[cache_key]
+
 
         # Exact case-insensitive match
         for met in self._metrics_cache:
@@ -329,6 +335,7 @@ class RegistryEngine:
             for s, m in ranked[:3]
         ]
         decision = self._adjudicate_with_llm("metric", cleaned, candidates, unit=unit, claim_context=context)
+        model_used = decision.get("_model_used", "deterministic")
 
         if decision.get("decision") == "alias_of" and decision.get("matched_id"):
             matched_id = decision["matched_id"]
@@ -339,13 +346,14 @@ class RegistryEngine:
                 target_type="metric",
                 decision_type="llm_adjudicated",
                 similarity_score=top_sim,
-                llm_reasoning=decision.get("reason", "LLM determined alias of existing metric")
+                llm_reasoning=decision.get("reason", "LLM determined alias of existing metric"),
+                model_used=model_used
             )
             return matched_met["id"], matched_met["canonical_name"]
         else:
             canonical_name = decision.get("canonical_name") or cleaned
             reason = decision.get("reason", "LLM determined distinct metric formula or qualifier")
-            return self._create_new_metric(canonical_name, emb, raw_mention, reason, top_sim, unit, is_llm=True)
+            return self._create_new_metric(canonical_name, emb, raw_mention, reason, top_sim, unit, is_llm=True, model_used=model_used)
 
     def _adjudicate_with_llm(
         self,
@@ -409,7 +417,8 @@ class RegistryEngine:
         mention_text: str,
         reason: str,
         similarity: float,
-        is_llm: bool = False
+        is_llm: bool = False,
+        model_used: str = "deterministic"
     ) -> Tuple[str, str]:
         """Insert new canonical entity and log decision."""
         entity_id = f"ent_{uuid.uuid4().hex[:8]}"
@@ -434,8 +443,7 @@ class RegistryEngine:
         })
 
         dec_type = "llm_adjudicated" if is_llm else "auto_new"
-        self._record_decision(mention_text, entity_id, "entity", dec_type, similarity, reason)
-        self._decision_cache[f"entity:{canonical_name.lower()}"] = (entity_id, canonical_name)
+        self._record_decision(mention_text, entity_id, "entity", dec_type, similarity, reason, model_used=model_used)
         self._decision_cache[f"entity:{mention_text.strip().lower()}"] = (entity_id, canonical_name)
         return entity_id, canonical_name
 
@@ -447,7 +455,8 @@ class RegistryEngine:
         reason: str,
         similarity: float,
         unit: Optional[str] = None,
-        is_llm: bool = False
+        is_llm: bool = False,
+        model_used: str = "deterministic"
     ) -> Tuple[str, str]:
         """Insert new canonical metric and log decision."""
         metric_id = f"met_{uuid.uuid4().hex[:8]}"
@@ -473,7 +482,7 @@ class RegistryEngine:
         })
 
         dec_type = "llm_adjudicated" if is_llm else "auto_new"
-        self._record_decision(mention_text, metric_id, "metric", dec_type, similarity, reason)
-        self._decision_cache[f"metric:{canonical_name.lower()}"] = (metric_id, canonical_name)
+        self._record_decision(mention_text, metric_id, "metric", dec_type, similarity, reason, model_used=model_used)
         self._decision_cache[f"metric:{mention_text.strip().lower()}"] = (metric_id, canonical_name)
         return metric_id, canonical_name
+

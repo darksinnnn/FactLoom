@@ -76,9 +76,13 @@ class GroqClient:
                     if resp.status_code == 200:
                         data = resp.json()
                         content = data["choices"][0]["message"]["content"]
+                        actual_model = data.get("model", payload["model"])
                         if response_json:
-                            return json.loads(content)
-                        return {"content": content}
+                            parsed = json.loads(content)
+                            if isinstance(parsed, dict):
+                                parsed["_model_used"] = actual_model
+                            return parsed
+                        return {"content": content, "_model_used": actual_model}
                     
                     elif resp.status_code == 429:
                         # Parse retry-after header or error message

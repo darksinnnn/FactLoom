@@ -112,6 +112,7 @@ def init_db(db_path: Optional[str] = None) -> None:
             decision_type TEXT NOT NULL,    -- auto_alias / auto_new / llm_adjudicated
             similarity_score REAL,
             llm_reasoning TEXT,
+            model_used TEXT,                -- deterministic / model ID (e.g. openai/gpt-oss-120b, qwen/qwen3.8-27b)
             created_at TEXT NOT NULL
         );
 
@@ -131,6 +132,13 @@ def init_db(db_path: Optional[str] = None) -> None:
         CREATE INDEX IF NOT EXISTS idx_relationships_pair ON relationships(observation_a_id, observation_b_id);
         CREATE INDEX IF NOT EXISTS idx_registry_decisions_mention ON registry_decisions(mention_text);
         """)
+
+        # Safe migration for model_used column if table already existed
+        try:
+            conn.execute("ALTER TABLE registry_decisions ADD COLUMN model_used TEXT DEFAULT 'deterministic';")
+        except sqlite3.OperationalError:
+            pass
+
     conn.close()
 
 if __name__ == "__main__":
