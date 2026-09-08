@@ -125,6 +125,13 @@ def seed_demo_cases(db_path: Optional[str] = None):
             "Deterministic verification: 1,266.41 million rupees aligns with 127 ₹ Cr within 0.283% tolerance."
         )
 
+        # FY23 & FY24 Adjusted EBITDA facts (enables multi-period ambiguity testing)
+        met_adj_ebitda = get_metric_id("Adjusted EBITDA")
+        fact_adj_fy24 = get_or_create_fact(ent_delhivery, met_adj_ebitda, "FY24", "Consolidated", "reported", "Adjusted EBITDA FY24")
+        get_or_create_obs(fact_adj_fy24, doc_ar, 36, "757.86", "million rupees", "757.86", "2024-05-17")
+        fact_adj_fy23 = get_or_create_fact(ent_delhivery, met_adj_ebitda, "FY23", "Consolidated", "reported", "Adjusted EBITDA FY23")
+        get_or_create_obs(fact_adj_fy23, doc_deck, 17, "(452)", "₹ Cr", "(452)", "2024-05-17")
+
         # -------------------------------------------------------------
         # Case 2: Delhivery FY24 Active Customers
         # -------------------------------------------------------------

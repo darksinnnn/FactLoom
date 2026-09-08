@@ -60,7 +60,11 @@ class RegistryEngine:
             ent_rows = conn.execute("SELECT id, canonical_name, entity_type_guess, embedding FROM entities").fetchall()
             self._entities_cache = []
             for r in ent_rows:
-                emb = self.embedder.deserialize_vector(r["embedding"]) if r["embedding"] else None
+                if r["embedding"]:
+                    emb = self.embedder.deserialize_vector(r["embedding"])
+                else:
+                    emb = self.embedder.embed_text(r["canonical_name"])
+                    conn.execute("UPDATE entities SET embedding = ? WHERE id = ?", (self.embedder.serialize_vector(emb), r["id"]))
                 self._entities_cache.append({
                     "id": r["id"],
                     "canonical_name": r["canonical_name"],
@@ -71,13 +75,18 @@ class RegistryEngine:
             met_rows = conn.execute("SELECT id, canonical_name, unit_family, embedding FROM metrics").fetchall()
             self._metrics_cache = []
             for r in met_rows:
-                emb = self.embedder.deserialize_vector(r["embedding"]) if r["embedding"] else None
+                if r["embedding"]:
+                    emb = self.embedder.deserialize_vector(r["embedding"])
+                else:
+                    emb = self.embedder.embed_text(r["canonical_name"])
+                    conn.execute("UPDATE metrics SET embedding = ? WHERE id = ?", (self.embedder.serialize_vector(emb), r["id"]))
                 self._metrics_cache.append({
                     "id": r["id"],
                     "canonical_name": r["canonical_name"],
                     "unit_family": r["unit_family"],
                     "embedding": emb
                 })
+            conn.commit()
         finally:
             conn.close()
 
@@ -164,8 +173,9 @@ class RegistryEngine:
     def resolve_entity(
         self,
         mention_text: str,
-        context: Optional[str] = None
-    ) -> Tuple[str, str]:
+        context: Optional[str] = None,
+        allow_create: bool = True
+    ) -> Tuple[Optional[str], str]:
         """
         Resolve an entity mention to (entity_id, canonical_name).
         Follows 3-tier architecture:
@@ -203,6 +213,8 @@ class RegistryEngine:
         emb = self.embedder.embed_text(cleaned)
 
         if not self._entities_cache:
+            if not allow_create:
+                return None, cleaned
             # Initial entry
             return self._create_new_entity(cleaned, emb, mention_text, "Initial entity in registry", 1.0)
 
@@ -230,6 +242,8 @@ class RegistryEngine:
 
         # Tier 2: Low similarity -> Auto-new
         if top_sim < self.lower_threshold:
+            if not allow_create:
+                return None, cleaned
             reason = f"Deterministic auto-new: low cosine similarity ({top_sim:.4f} < {self.lower_threshold}) with nearest '{top_ent['canonical_name']}'"
             return self._create_new_entity(cleaned, emb, mention_text, reason, top_sim)
 
@@ -255,6 +269,8 @@ class RegistryEngine:
             )
             return matched_ent["id"], matched_ent["canonical_name"]
         else:
+            if not allow_create:
+                return None, cleaned
             canonical_name = decision.get("canonical_name") or cleaned
             reason = decision.get("reason", "LLM determined distinct new entity entry")
             return self._create_new_entity(canonical_name, emb, mention_text, reason, top_sim, is_llm=True, model_used=model_used)
@@ -263,8 +279,9 @@ class RegistryEngine:
         self,
         mention_text: str,
         unit: Optional[str] = None,
-        context: Optional[str] = None
-    ) -> Tuple[str, str]:
+        context: Optional[str] = None,
+        allow_create: bool = True
+    ) -> Tuple[Optional[str], str]:
         """
         Resolve a metric mention to (metric_id, canonical_name).
         Applies mention pre-cleaning (bracketed unit stripping) and modifier divergence guards.
@@ -297,6 +314,8 @@ class RegistryEngine:
         emb = self.embedder.embed_text(cleaned)
 
         if not self._metrics_cache:
+            if not allow_create:
+                return None, cleaned
             return self._create_new_metric(cleaned, emb, raw_mention, "Initial metric in registry", 1.0, unit)
 
         # Nearest neighbor search
@@ -326,6 +345,8 @@ class RegistryEngine:
 
         # Tier 2: Low similarity -> Auto-new
         if top_sim < self.lower_threshold and not has_mod_mismatch:
+            if not allow_create:
+                return None, cleaned
             reason = f"Deterministic auto-new: low cosine similarity ({top_sim:.4f} < {self.lower_threshold}) with nearest '{top_met['canonical_name']}'"
             return self._create_new_metric(cleaned, emb, raw_mention, reason, top_sim, unit)
 
@@ -351,6 +372,8 @@ class RegistryEngine:
             )
             return matched_met["id"], matched_met["canonical_name"]
         else:
+            if not allow_create:
+                return None, cleaned
             canonical_name = decision.get("canonical_name") or cleaned
             reason = decision.get("reason", "LLM determined distinct metric formula or qualifier")
             return self._create_new_metric(canonical_name, emb, raw_mention, reason, top_sim, unit, is_llm=True, model_used=model_used)
@@ -402,7 +425,23 @@ class RegistryEngine:
             except Exception as e2:
                 logger.error(f"Adjudicator fallback call failed: {e2}. Defaulting to new_entry.")
 
-        # Safe fallback if LLM unreachable: preserve distinctness
+        # Safe fallback if LLM unreachable:
+        # If candidate has strong lexical overlap (e.g. "Active Customer Count" vs "Active Customers")
+        # and no modifier divergence, safely resolve to top candidate alias.
+        if candidates:
+            top_cand = candidates[0]
+            cand_name = top_cand.get("canonical_name", "").lower()
+            mention_lower = mention_text.lower()
+            tokens_m = {w.rstrip('s') for w in re.findall(r'\b\w+\b', mention_lower)} - {"count", "total", "figure", "number"}
+            tokens_c = {w.rstrip('s') for w in re.findall(r'\b\w+\b', cand_name)}
+            if tokens_m and (tokens_m.issubset(tokens_c) or tokens_c.issubset(tokens_m)) and not self.has_modifier_mismatch(mention_text, top_cand.get("canonical_name", "")):
+                return {
+                    "decision": "alias_of",
+                    "matched_id": top_cand.get("id"),
+                    "canonical_name": top_cand.get("canonical_name"),
+                    "reason": "Deterministic fallback: lexical token subset overlap without modifier divergence"
+                }
+
         return {
             "decision": "new_entry",
             "matched_id": None,
@@ -459,6 +498,18 @@ class RegistryEngine:
         model_used: str = "deterministic"
     ) -> Tuple[str, str]:
         """Insert new canonical metric and log decision."""
+        # Guard: Never register questions or full sentences as canonical metrics
+        if "?" in canonical_name or len(canonical_name) > 65 or re.match(r"^(?:what|why|how|does|when|is)\b", canonical_name.strip(), re.I):
+            if self._metrics_cache:
+                ranked = sorted(
+                    [(self.embedder.cosine_similarity(embedding, m["embedding"]), m) for m in self._metrics_cache if m.get("embedding") is not None],
+                    key=lambda x: x[0], reverse=True
+                )
+                if ranked:
+                    top_m = ranked[0][1]
+                    return top_m["id"], top_m["canonical_name"]
+            return "met_unknown", "Unknown Metric"
+
         metric_id = f"met_{uuid.uuid4().hex[:8]}"
         created_at = datetime.utcnow().isoformat() + "Z"
         emb_blob = self.embedder.serialize_vector(embedding)

@@ -41,7 +41,7 @@ class GroqClient:
         temperature: float = 0.0,
         response_json: bool = True,
         reasoning_effort: Optional[str] = "low",
-        max_retries: int = 8
+        max_retries: int = 3
     ) -> Dict[str, Any]:
         """
         Call Groq chat completion with automatic model routing and rate-limit backoff.
@@ -103,22 +103,26 @@ class GroqClient:
                             pass
 
                         # If rate limit wait is significant or on second retry attempt, fall back to alternative model
-                        if retry_after > 5.0 or attempt >= 1:
+                        if retry_after > 3.0 or attempt >= 1:
                             alt_model = "qwen/qwen3.8-27b" if "120b" in payload.get("model", "") else "openai/gpt-oss-120b"
                             if payload.get("model") != alt_model:
                                 logger.warning(f"429 rate limit hit on {payload.get('model')} (retry_after={retry_after:.1f}s, attempt={attempt+1}). Falling back immediately to {alt_model}...")
                                 payload["model"] = alt_model
                                 time.sleep(0.5)
                                 continue
+                            elif retry_after > 5.0:
+                                raise RuntimeError(f"Groq 429 rate limit cooldown exceeds threshold ({retry_after:.1f}s). Engaging deterministic backstop.")
 
-
-                        wait_time = max(delay, retry_after) + 1.0
+                        wait_time = min(max(delay, retry_after) + 0.5, 4.0)
                         logger.warning(f"Groq 429 rate limit hit. Waiting {wait_time:.2f}s before retry (attempt {attempt+1}/{max_retries})...")
                         time.sleep(wait_time)
-                        delay = max(wait_time * 1.2, 4.0)
+                        delay = min(delay * 1.5, 4.0)
                     else:
                         err_msg = f"Groq API error {resp.status_code}: {resp.text}"
                         logger.error(err_msg)
+                        # Do not retry on 413 payload too large or input token limit exceeded
+                        if resp.status_code == 413 or "Request too large" in resp.text or "too large for model" in resp.text:
+                            raise RuntimeError(err_msg)
                         if attempt == max_retries - 1:
                             raise RuntimeError(err_msg)
                         time.sleep(delay)

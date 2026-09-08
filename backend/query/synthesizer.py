@@ -89,15 +89,23 @@ class AnswerSynthesizer:
         abstention_reason = None
 
         if len(retrieval.facts) > 1:
-            # Check if any relationship between the facts unifies them
-            same_as_relationships = [r for r in retrieval.relationships if r.type == "SAME_AS"]
-            if not same_as_relationships:
+            periods = sorted(list({f.period for f in retrieval.facts if f.period and f.period.lower() != "unspecified"}))
+            # If inquiry covers multiple distinct periods and user didn't specify a single period:
+            if len(periods) > 1 and not parsed_query.period_mention:
                 is_ambiguous = True
-                periods = sorted(list({f.period for f in retrieval.facts if f.period}))
                 abstention_reason = (
                     f"The inquiry resolves to {len(retrieval.facts)} distinct facts across periods ({', '.join(periods)}). "
                     f"Abstaining from a single merged figure per ambiguity protocol; presenting all labeled facts."
                 )
+            else:
+                # Check if any relationship between the facts unifies them
+                same_as_relationships = [r for r in retrieval.relationships if r.type == "SAME_AS"]
+                if not same_as_relationships:
+                    is_ambiguous = True
+                    abstention_reason = (
+                        f"The inquiry resolves to {len(retrieval.facts)} distinct facts with no unifying relationship. "
+                        f"Abstaining from a single merged figure per ambiguity protocol; presenting all labeled facts."
+                    )
 
         # 2. Synthesize Answer (via LLM with deterministic template fallback)
         raw_answer = self._generate_answer_text(parsed_query, retrieval, is_ambiguous, abstention_reason)
@@ -166,25 +174,26 @@ class AnswerSynthesizer:
         abstention_reason: Optional[str]
     ) -> str:
         """Call Groq to draft grounded answer with fallback to deterministic synthesis."""
-        # Prepare context payload for prompt
+        # Prepare compact context payload for prompt (strictly bounded to fit model limits)
         facts_summary = []
-        for f in retrieval.facts:
+        for f in retrieval.facts[:6]:
             facts_summary.append(
                 f"- Fact [{f.id}]: {f.entity_name} | {f.metric_name} | Period: {f.period} | Scope: {f.scope or 'Consolidated'}"
             )
 
         obs_summary = []
-        for o in retrieval.observations:
+        for o in retrieval.observations[:8]:
+            quote_text = o.quote_span[:90] + "..." if len(o.quote_span) > 90 else o.quote_span
             obs_summary.append(
                 f"- Observation [{o.id}] (under Fact {o.fact_id}): Value: {o.value} {o.unit or ''} | "
-                f"Source: {o.document_filename} (p.{o.page_number}) | Quote: \"{o.quote_span}\""
+                f"Source: {o.document_filename} (p.{o.page_number}) | Quote: \"{quote_text}\""
             )
 
         rel_summary = []
-        for r in retrieval.relationships:
+        for r in retrieval.relationships[:6]:
             rel_summary.append(
                 f"- Relationship: [{r.observation_a_id}] <-> [{r.observation_b_id}] | "
-                f"Type: {r.type} | Dimension: {r.dimension} | Justification: {r.justification}"
+                f"Type: {r.type} | Dimension: {r.dimension} | Justification: {r.justification[:100]}"
             )
 
         user_content = (

@@ -68,11 +68,11 @@ class QueryParser:
         canonical_metric = None
 
         if entity_m:
-            res_e = self.registry.resolve_entity(entity_m)
-            canonical_entity = res_e[1] if isinstance(res_e, (tuple, list)) else str(res_e)
+            res_e = self.registry.resolve_entity(entity_m, allow_create=False)
+            canonical_entity = res_e[1] if isinstance(res_e, (tuple, list)) and res_e[0] is not None else None
         if metric_m:
-            res_m = self.registry.resolve_metric(metric_m)
-            canonical_metric = res_m[1] if isinstance(res_m, (tuple, list)) else str(res_m)
+            res_m = self.registry.resolve_metric(metric_m, allow_create=False)
+            canonical_metric = res_m[1] if isinstance(res_m, (tuple, list)) and res_m[0] is not None else None
 
         return ParsedQuery(
             entity_mention=entity_m,
@@ -120,14 +120,15 @@ class QueryParser:
         if m_fy:
             period = m_fy.group(1).strip()
 
-        # 2. Possessive entity extraction: "What was [Entity]'s [Metric]?"
-        cleaned_prefix = re.sub(r'^(?:what\s+(?:was|is|are)|how\s+many|tell\s+me\s+about)\s+', '', q, flags=re.IGNORECASE).strip()
+        # 2. Possessive entity/metric extraction: "What was [Entity]'s [Metric]?"
+        cleaned_prefix = re.sub(r'^(?:what\s+(?:was|is|are)|how\s+many|tell\s+me\s+about|can|does|is|are|will|should|when\s+did)\s+', '', q, flags=re.IGNORECASE).strip()
         m_poss = re.search(r"\b([A-Z][a-zA-Z\s]+?)'s\s+(.+?)(?:\s*\?|$)", cleaned_prefix)
         if m_poss:
             entity = m_poss.group(1).strip()
             cand_metric = m_poss.group(2).strip()
             if period:
                 cand_metric = re.sub(r'\b' + re.escape(period) + r'\b', '', cand_metric, flags=re.IGNORECASE).strip()
+            cand_metric = re.sub(r'\s+(?:across|reported in|in the|from the|in|between|and|for|figures of)\s+.*$', '', cand_metric, flags=re.IGNORECASE).strip()
             metric = cand_metric
 
         # 3. "Is [Entity] currently a [Role] at [Company]?"
@@ -135,24 +136,62 @@ class QueryParser:
             m_is = re.search(r"Is\s+([A-Z][a-zA-Z\s]+?)\s+(?:currently\s+)?a\s+([A-Za-z\s]+?)(?:\s+at|\s+in|\s*\?|$)", q, re.IGNORECASE)
             if m_is:
                 entity = m_is.group(1).strip()
-                metric = m_is.group(2).strip()
+                if not metric:
+                    metric = m_is.group(2).strip()
 
         # 4. "How many [Metric] does [Entity] have in [Period]?"
         if not entity:
             m_how_many = re.search(r"how\s+many\s+([A-Za-z\s]+?)\s+does\s+([A-Z][a-zA-Z\s]+?)\s+(?:have|report)", q, re.IGNORECASE)
             if m_how_many:
-                metric = m_how_many.group(1).strip()
+                if not metric:
+                    metric = m_how_many.group(1).strip()
                 entity = m_how_many.group(2).strip()
 
-        # 5. "What was [Entity] [Metric]...?"
+        # 5. Check in-memory entities cache (prioritizing the earliest appearing entity in the question)
+        if not entity and hasattr(self.registry, "_entities_cache") and self.registry._entities_cache:
+            matched_entities = []
+            for e in self.registry._entities_cache:
+                cname = e.get("canonical_name", "")
+                if cname and cname.lower() not in ["company", "unnamed entity", "reporting entity"]:
+                    idx = q.lower().find(cname.lower())
+                    if idx >= 0:
+                        matched_entities.append((idx, cname))
+                    elif len(cname.split()) > 0 and len(cname.split()[0]) >= 4:
+                        first_tok = cname.split()[0].lower()
+                        idx_tok = q.lower().find(first_tok)
+                        if idx_tok >= 0:
+                            matched_entities.append((idx_tok, cname))
+            if matched_entities:
+                matched_entities.sort(key=lambda x: x[0])
+                entity = matched_entities[0][1]
+
+        # 6. Check in-memory metrics cache (sorted by descending name length, whole word match)
+        if hasattr(self.registry, "_metrics_cache") and self.registry._metrics_cache:
+            for m in sorted(self.registry._metrics_cache, key=lambda x: -len(x.get("canonical_name", ""))):
+                mname = m.get("canonical_name", "")
+                if mname and len(mname) >= 3:
+                    # Match exact metric name as word or phrase in question
+                    if re.search(r'\b' + re.escape(mname) + r'\b', q, re.IGNORECASE):
+                        metric = mname
+                        break
+                    # Also match singular form if metric ends in 's' (e.g. customer -> customers)
+                    elif mname.endswith('s') and re.search(r'\b' + re.escape(mname[:-1]) + r'\b', q, re.IGNORECASE):
+                        metric = mname
+                        break
+                    # Also match stem if metric starts with word in query (e.g. "Directorship" -> "director")
+                    elif re.search(r'\bdirector\b', q, re.IGNORECASE) and "directorship" in mname.lower():
+                        metric = mname
+                        break
+
         if not metric:
             m_what = re.search(r"what\s+(?:was|is)\s+([A-Za-z\s]+?)(?:\s*\?|$)", q, re.IGNORECASE)
             if m_what:
-                metric = m_what.group(1).strip()
+                cand = m_what.group(1).strip()
+                metric = re.sub(r'\s+(?:across|reported in|in the|from the|in)\s+.*$', '', cand, flags=re.IGNORECASE).strip()
 
         return {
             "entity_mention": entity,
-            "metric_mention": metric or q,
+            "metric_mention": metric,
             "period_mention": period,
             "scope_mention": scope
         }

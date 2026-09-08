@@ -1,0 +1,478 @@
+{
+  "timestamp": "2026-09-08T13:12:37.798187Z",
+  "total_questions": 28,
+  "passed": 28,
+  "failed": 0,
+  "accuracy_pct": 100.0,
+  "total_citations_audited": 49,
+  "valid_citations": 49,
+  "citation_resolution_rate_pct": 100.0,
+  "average_latency_ms": 3829.6,
+  "total_duration_seconds": 121.8,
+  "category_breakdown": {
+    "extraction_unit": {
+      "total": 4,
+      "passed": 4
+    },
+    "temporal_governance": {
+      "total": 4,
+      "passed": 4
+    },
+    "reconciled_metrics": {
+      "total": 4,
+      "passed": 4
+    },
+    "mandatory_abstention": {
+      "total": 4,
+      "passed": 4
+    },
+    "ambiguous_inquiry": {
+      "total": 4,
+      "passed": 4
+    },
+    "generalization_apple": {
+      "total": 4,
+      "passed": 4
+    },
+    "hallucination_trap": {
+      "total": 4,
+      "passed": 4
+    }
+  },
+  "detailed_results": [
+    {
+      "id": "eval-ext-01",
+      "category": "extraction_unit",
+      "question": "What was Delhivery's FY24 Revenue from contracts with customers?",
+      "passed": true,
+      "latency_ms": 3333.6,
+      "citations_count": 2,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "81,415",
+        "8,142",
+        "million"
+      ],
+      "answer_preview": "For FY24, Delhivery Limited reported Revenue from contracts with customers across multiple documents that corroborate via ROUNDING + UNIT_MISMATCH: 8,142 \u20b9 Cr [cite:obs_cc839017c9] vs 81,415.38 millio"
+    },
+    {
+      "id": "eval-ext-02",
+      "category": "extraction_unit",
+      "question": "What was Delhivery's FY24 Total expenses?",
+      "passed": true,
+      "latency_ms": 1930.0,
+      "citations_count": 1,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "8,825",
+        "crore"
+      ],
+      "answer_preview": "Delhivery's FY24 Total expenses (Consolidated) were \u20b98,825 Crore [cite:obs_3c9838f9b4]."
+    },
+    {
+      "id": "eval-ext-03",
+      "category": "extraction_unit",
+      "question": "What was Delhivery's FY24 Employee benefits expense?",
+      "passed": true,
+      "latency_ms": 2690.3,
+      "citations_count": 1,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "million"
+      ],
+      "answer_preview": "Delhivery's FY24 Employee benefits expense (Consolidated) was \u20b914,367.70 million [cite:obs_e31a8cb10a]."
+    },
+    {
+      "id": "eval-ext-04",
+      "category": "extraction_unit",
+      "question": "What was Delhivery's FY24 Depreciation and amortisation expense?",
+      "passed": true,
+      "latency_ms": 2974.5,
+      "citations_count": 2,
+      "citation_valid": true,
+      "is_ambiguous": true,
+      "matched_keywords": [
+        "722"
+      ],
+      "answer_preview": "Delhivery's FY24 Depreciation and amortisation expense (Consolidated) was \u20b9722 Cr [cite:obs_47940fc7bc]. On a year-over-year basis, this represented a decrease of 13.2% [cite:obs_7f7d0a0099]."
+    },
+    {
+      "id": "eval-temp-01",
+      "category": "temporal_governance",
+      "question": "Is Suvir Sujan currently a director at Delhivery?",
+      "passed": true,
+      "latency_ms": 3776.2,
+      "citations_count": 2,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "ceased",
+        "supersede",
+        "august 24, 2023",
+        "no"
+      ],
+      "answer_preview": "Regarding Suvir Sujan Directorship Status: The earlier filing recorded Non-Executive Nominee Director [cite:obs_c9081519], but the subsequent filing records Ceased to be Director [cite:obs_2061ad55], "
+    },
+    {
+      "id": "eval-temp-02",
+      "category": "temporal_governance",
+      "question": "When did Suvir Sujan cease to be a director of Delhivery Limited?",
+      "passed": true,
+      "latency_ms": 4057.9,
+      "citations_count": 2,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "august 24, 2023",
+        "2023"
+      ],
+      "answer_preview": "Regarding Suvir Sujan Directorship Status: The earlier filing recorded Non-Executive Nominee Director [cite:obs_c9081519], but the subsequent filing records Ceased to be Director [cite:obs_2061ad55], "
+    },
+    {
+      "id": "eval-temp-03",
+      "category": "temporal_governance",
+      "question": "What was Suvir Sujan's directorship status in the 2022 Prospectus?",
+      "passed": true,
+      "latency_ms": 3782.0,
+      "citations_count": 2,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "nominee",
+        "director",
+        "prospectus"
+      ],
+      "answer_preview": "Regarding Suvir Sujan Directorship Status: The earlier filing recorded Non-Executive Nominee Director [cite:obs_c9081519], but the subsequent filing records Ceased to be Director [cite:obs_2061ad55], "
+    },
+    {
+      "id": "eval-temp-04",
+      "category": "temporal_governance",
+      "question": "Does the regulatory cessation filing supersede the 2022 Prospectus for Suvir Sujan?",
+      "passed": true,
+      "latency_ms": 4172.5,
+      "citations_count": 2,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "supersede",
+        "ceased"
+      ],
+      "answer_preview": "Regarding Suvir Sujan Directorship Status: The earlier filing recorded Non-Executive Nominee Director [cite:obs_c9081519], but the subsequent filing records Ceased to be Director [cite:obs_2061ad55], "
+    },
+    {
+      "id": "eval-rec-01",
+      "category": "reconciled_metrics",
+      "question": "What was Delhivery's FY24 EBITDA across the annual report and earnings deck?",
+      "passed": true,
+      "latency_ms": 3810.8,
+      "citations_count": 2,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "1,266",
+        "127",
+        "ebitda"
+      ],
+      "answer_preview": "For FY24, Delhivery Limited reported EBITDA across multiple documents that corroborate via ROUNDING + UNIT_MISMATCH: 127 \u20b9 Cr [cite:obs_9285bd769a] vs 1,266.41 million rupees [cite:obs_583b0f5871]. De"
+    },
+    {
+      "id": "eval-rec-02",
+      "category": "reconciled_metrics",
+      "question": "What was India's Real GDP growth in FY25?",
+      "passed": true,
+      "latency_ms": 3797.3,
+      "citations_count": 2,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "6.4",
+        "6.5",
+        "estimate",
+        "gdp"
+      ],
+      "answer_preview": "For FY25, India Real GDP Growth is reconciled by ESTIMATE_VS_ACTUAL: 6.4% % [cite:obs_58648432] is updated by 6.5% % [cite:obs_bbcad838]. Observation A (First Advance Estimate of 6.4%) is updated and "
+    },
+    {
+      "id": "eval-rec-03",
+      "category": "reconciled_metrics",
+      "question": "What was Delhivery's FY23 Adjusted EBITDA across documents?",
+      "passed": true,
+      "latency_ms": 3219.6,
+      "citations_count": 1,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "452",
+        "ebitda"
+      ],
+      "answer_preview": "Delhivery Limited reported Adjusted EBITDA for FY23 as: (452) \u20b9 Cr [cite:obs_9d9e587d] in 03-delhivery-q4-fy24-earnings-presentation.pdf (p.17)"
+    },
+    {
+      "id": "eval-rec-04",
+      "category": "reconciled_metrics",
+      "question": "Are Delhivery's FY24 EBITDA figures of \u20b91,266.41M and \u20b9127Cr reconciled as the same fact?",
+      "passed": true,
+      "latency_ms": 3558.2,
+      "citations_count": 2,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "round",
+        "0.28"
+      ],
+      "answer_preview": "For FY24, Delhivery Limited reported EBITDA across multiple documents that corroborate via ROUNDING + UNIT_MISMATCH: 127 \u20b9 Cr [cite:obs_9285bd769a] vs 1,266.41 million rupees [cite:obs_583b0f5871]. De"
+    },
+    {
+      "id": "eval-abst-01",
+      "category": "mandatory_abstention",
+      "question": "How many active customers does Delhivery have in FY24?",
+      "passed": true,
+      "latency_ms": 4187.5,
+      "citations_count": 2,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "33,250",
+        "33,278"
+      ],
+      "answer_preview": "For FY24, Delhivery Limited reported conflicting values for Active Customers: \"33,278\" (33,278 active customers) [cite:obs_1ed0ebec] vs \"over 33,250 active customers\" (33,250 active customers) [cite:o"
+    },
+    {
+      "id": "eval-abst-02",
+      "category": "mandatory_abstention",
+      "question": "Why does Delhivery report both 33,250 and 33,278 active customers?",
+      "passed": true,
+      "latency_ms": 3558.0,
+      "citations_count": 2,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "unresolved",
+        "no footnote",
+        "discrepanc",
+        "conflict"
+      ],
+      "answer_preview": "For FY24, Delhivery Limited reported conflicting values for Active Customers: \"33,278\" (33,278 active customers) [cite:obs_1ed0ebec] vs \"over 33,250 active customers\" (33,250 active customers) [cite:o"
+    },
+    {
+      "id": "eval-abst-03",
+      "category": "mandatory_abstention",
+      "question": "Can Delhivery's active customer counts of 33,250 and 33,278 be merged into a single number?",
+      "passed": true,
+      "latency_ms": 3711.6,
+      "citations_count": 2,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "cannot",
+        "no",
+        "unresolved"
+      ],
+      "answer_preview": "No, the two figures cannot be merged into a single number. The Q4 FY24 earnings presentation reports 33,278 active customers [cite:obs_1ed0ebec], while the FY24 Annual Report excerpt states 'over 33,2"
+    },
+    {
+      "id": "eval-abst-04",
+      "category": "mandatory_abstention",
+      "question": "What is the discrepancy between Delhivery's active customer count in the deck vs annual report?",
+      "passed": true,
+      "latency_ms": 4134.5,
+      "citations_count": 2,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "33,250",
+        "33,278"
+      ],
+      "answer_preview": "For FY24, Delhivery Limited reported conflicting values for Active Customers: \"33,278\" (33,278 active customers) [cite:obs_1ed0ebec] vs \"over 33,250 active customers\" (33,250 active customers) [cite:o"
+    },
+    {
+      "id": "eval-ambig-01",
+      "category": "ambiguous_inquiry",
+      "question": "What is India's GDP growth?",
+      "passed": true,
+      "latency_ms": 3635.6,
+      "citations_count": 3,
+      "citation_valid": true,
+      "is_ambiguous": true,
+      "matched_keywords": [
+        "fy24",
+        "fy25",
+        "6.4",
+        "6.5"
+      ],
+      "answer_preview": "The question is ambiguous across multiple distinct periods or metrics. Abstaining from a single merged figure:\n- **FY25** (India Real GDP Growth): 6.4% % [cite:obs_58648432] (p.1 of 01-india-economic-"
+    },
+    {
+      "id": "eval-ambig-02",
+      "category": "ambiguous_inquiry",
+      "question": "What was Delhivery's Adjusted EBITDA across fiscal years?",
+      "passed": true,
+      "latency_ms": 4228.6,
+      "citations_count": 2,
+      "citation_valid": true,
+      "is_ambiguous": true,
+      "matched_keywords": [
+        "fy23",
+        "fy24",
+        "ebitda"
+      ],
+      "answer_preview": "The question is ambiguous across multiple distinct periods or metrics. Abstaining from a single merged figure:\n- **FY24** (Delhivery Limited Adjusted EBITDA): 757.86 million rupees [cite:obs_edfd4d765"
+    },
+    {
+      "id": "eval-ambig-03",
+      "category": "ambiguous_inquiry",
+      "question": "What is Delhivery's revenue across fiscal years?",
+      "passed": true,
+      "latency_ms": 7378.6,
+      "citations_count": 2,
+      "citation_valid": true,
+      "is_ambiguous": true,
+      "matched_keywords": [
+        "fy23",
+        "fy24",
+        "revenue"
+      ],
+      "answer_preview": "The question is ambiguous across multiple distinct periods or metrics. Abstaining from a single merged figure:\n- **FY23** (Delhivery Limited Revenue for services): 7,224 \u20b9 Cr [cite:obs_4d3092fd2e] (p."
+    },
+    {
+      "id": "eval-ambig-04",
+      "category": "ambiguous_inquiry",
+      "question": "What was Delhivery's total income across fiscal years?",
+      "passed": true,
+      "latency_ms": 3743.2,
+      "citations_count": 3,
+      "citation_valid": true,
+      "is_ambiguous": true,
+      "matched_keywords": [
+        "fy23",
+        "fy24",
+        "income"
+      ],
+      "answer_preview": "Delhivery's total income across the available fiscal years is as follows:\n\n**FY24 (Consolidated):** Total income was \u20b98,594 Cr [cite:obs_e54c0413ff]. This is corroborated by the annual report, which r"
+    },
+    {
+      "id": "eval-apple-01",
+      "category": "generalization_apple",
+      "question": "What was Apple's total net sales reported in its annual 10-K?",
+      "passed": true,
+      "latency_ms": 3952.2,
+      "citations_count": 7,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "383,285",
+        "162,560",
+        "94,294",
+        "apple"
+      ],
+      "answer_preview": "For Unspecified, Apple reported conflicting values for Total net sales: \"$ \n383,285\" (383,285 USD) [cite:obs_2b7d37d617] vs \"$ \n162,560\" (162,560 USD) [cite:obs_3bed9c674c] vs \"94,294\" (94,294 ) [cite"
+    },
+    {
+      "id": "eval-apple-02",
+      "category": "generalization_apple",
+      "question": "What was Apple's iPhone net sales reported in its 10-K?",
+      "passed": true,
+      "latency_ms": 4103.7,
+      "citations_count": 1,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "200,583",
+        "iphone",
+        "usd"
+      ],
+      "answer_preview": "Apple reported iPhone for Unspecified as: 200,583 USD [cite:obs_1311042c28] in real_out_of_corpus.pdf (p.1)"
+    },
+    {
+      "id": "eval-apple-03",
+      "category": "generalization_apple",
+      "question": "What was Apple's Services net sales reported in its 10-K?",
+      "passed": true,
+      "latency_ms": 3933.8,
+      "citations_count": 1,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "85,200",
+        "services",
+        "usd"
+      ],
+      "answer_preview": "Apple reported Services for Unspecified as: 85,200 USD [cite:obs_ba6b9887cb] in real_out_of_corpus.pdf (p.1)"
+    },
+    {
+      "id": "eval-apple-04",
+      "category": "generalization_apple",
+      "question": "What was Apple's Products net sales reported in its 10-K?",
+      "passed": true,
+      "latency_ms": 4050.0,
+      "citations_count": 1,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "298,085",
+        "products",
+        "usd"
+      ],
+      "answer_preview": "Apple reported Products for Unspecified as: 298,085 USD [cite:obs_4b546e3df7] in real_out_of_corpus.pdf (p.1)"
+    },
+    {
+      "id": "eval-trap-01",
+      "category": "hallucination_trap",
+      "question": "What was Delhivery's FY24 profit after tax in US Dollars?",
+      "passed": true,
+      "latency_ms": 1790.4,
+      "citations_count": 0,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "no grounded"
+      ],
+      "answer_preview": "No grounded facts matching this inquiry were found in the current document repository."
+    },
+    {
+      "id": "eval-trap-02",
+      "category": "hallucination_trap",
+      "question": "Who is Delhivery's Chief Marketing Officer in FY24?",
+      "passed": true,
+      "latency_ms": 1855.4,
+      "citations_count": 0,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "no grounded"
+      ],
+      "answer_preview": "No grounded facts matching this inquiry were found in the current document repository."
+    },
+    {
+      "id": "eval-trap-03",
+      "category": "hallucination_trap",
+      "question": "What was Apple's total electric vehicle sales in 2024?",
+      "passed": true,
+      "latency_ms": 5995.0,
+      "citations_count": 0,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "no grounded"
+      ],
+      "answer_preview": "No grounded facts matching this inquiry were found in the current document repository."
+    },
+    {
+      "id": "eval-trap-04",
+      "category": "hallucination_trap",
+      "question": "What was Acme Global's FY26 projected revenue?",
+      "passed": true,
+      "latency_ms": 5868.9,
+      "citations_count": 0,
+      "citation_valid": true,
+      "is_ambiguous": false,
+      "matched_keywords": [
+        "no grounded"
+      ],
+      "answer_preview": "No grounded facts matching this inquiry were found in the current document repository."
+    }
+  ]
+}

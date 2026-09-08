@@ -106,19 +106,30 @@ class KnowledgeRetriever:
 
             fact_rows = conn.execute(" ".join(query_parts), params).fetchall()
 
-            # If no facts found with strict match, relax metric/entity filters to partial matching
+            # If no facts found with strict match, relax metric/entity filters while strictly preserving entity scope
             if not fact_rows and (parsed.metric_mention or parsed.entity_mention):
-                relaxed_query = """
+                rel_parts = [
+                    """
                     SELECT f.id as fact_id, f.scope, f.period, f.measurement_type, f.definition,
                            e.canonical_name as entity_name, m.canonical_name as metric_name
                     FROM facts f
                     JOIN entities e ON f.entity_id = e.id
                     JOIN metrics m ON f.metric_id = m.id
-                    WHERE (LOWER(m.canonical_name) LIKE LOWER(?) OR LOWER(e.canonical_name) LIKE LOWER(?))
-                """
-                m_token = parsed.canonical_metric or parsed.metric_mention or ""
-                e_token = parsed.canonical_entity or parsed.entity_mention or ""
-                fact_rows = conn.execute(relaxed_query, (f"%{m_token}%", f"%{e_token}%")).fetchall()
+                    WHERE 1=1
+                    """
+                ]
+                rel_params = []
+                e_token = parsed.canonical_entity or parsed.entity_mention
+                m_token = parsed.canonical_metric or parsed.metric_mention
+
+                if e_token:
+                    rel_parts.append("AND (LOWER(e.canonical_name) LIKE LOWER(?) OR LOWER(e.created_from_mention) LIKE LOWER(?))")
+                    rel_params.extend([f"%{e_token}%", f"%{e_token}%"])
+                if m_token:
+                    rel_parts.append("AND (LOWER(m.canonical_name) LIKE LOWER(?) OR LOWER(m.created_from_mention) LIKE LOWER(?))")
+                    rel_params.extend([f"%{m_token}%", f"%{m_token}%"])
+
+                fact_rows = conn.execute(" ".join(rel_parts), rel_params).fetchall()
 
             if not fact_rows:
                 return RetrievalResult()

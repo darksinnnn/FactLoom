@@ -1,0 +1,296 @@
+{
+  "description": "FactLoom Comprehensive Evaluation Suite (Phase 7 Gate)",
+  "version": "1.0.0",
+  "total_questions": 28,
+  "categories": [
+    "extraction_unit",
+    "temporal_governance",
+    "reconciled_metrics",
+    "mandatory_abstention",
+    "ambiguous_inquiry",
+    "generalization_apple",
+    "hallucination_trap"
+  ],
+  "questions": [
+    {
+      "id": "eval-ext-01",
+      "category": "extraction_unit",
+      "question": "What was Delhivery's FY24 Revenue from contracts with customers?",
+      "expected_keywords": ["81,415", "81415", "8,142", "8142", "million", "crore"],
+      "must_cite_min": 1,
+      "expect_ambiguity": false,
+      "expect_abstention": false,
+      "description": "Checks exact extraction of primary revenue figure with INR Million or Crore unit."
+    },
+    {
+      "id": "eval-ext-02",
+      "category": "extraction_unit",
+      "question": "What was Delhivery's FY24 Total expenses?",
+      "expected_keywords": ["85,556", "85556", "8,825", "8825", "million", "crore"],
+      "must_cite_min": 1,
+      "expect_ambiguity": false,
+      "expect_abstention": false,
+      "description": "Checks total expenses extracted from audited statements."
+    },
+    {
+      "id": "eval-ext-03",
+      "category": "extraction_unit",
+      "question": "What was Delhivery's FY24 Employee benefits expense?",
+      "expected_keywords": ["14,484", "14484", "1,448", "million", "crore"],
+      "must_cite_min": 1,
+      "expect_ambiguity": false,
+      "expect_abstention": false,
+      "description": "Checks employee benefits expense line item extraction."
+    },
+    {
+      "id": "eval-ext-04",
+      "category": "extraction_unit",
+      "question": "What was Delhivery's FY24 Depreciation and amortisation expense?",
+      "expected_keywords": ["6,882", "6882", "722", "million", "crore"],
+      "must_cite_min": 1,
+      "expect_ambiguity": false,
+      "expect_abstention": false,
+      "description": "Checks depreciation and amortisation expense extraction."
+    },
+    {
+      "id": "eval-temp-01",
+      "category": "temporal_governance",
+      "question": "Is Suvir Sujan currently a director at Delhivery?",
+      "expected_keywords": ["ceased", "resigned", "supersede", "august 24, 2023", "no"],
+      "must_cite_min": 1,
+      "expect_ambiguity": false,
+      "expect_abstention": false,
+      "description": "Verifies that Aug 24, 2023 cessation filing supersedes 2022 Prospectus nominee status."
+    },
+    {
+      "id": "eval-temp-02",
+      "category": "temporal_governance",
+      "question": "When did Suvir Sujan cease to be a director of Delhivery Limited?",
+      "expected_keywords": ["august 24, 2023", "aug 24, 2023", "2023"],
+      "must_cite_min": 1,
+      "expect_ambiguity": false,
+      "expect_abstention": false,
+      "description": "Verifies exact cessation date extraction from regulatory disclosure."
+    },
+    {
+      "id": "eval-temp-03",
+      "category": "temporal_governance",
+      "question": "What was Suvir Sujan's directorship status in the 2022 Prospectus?",
+      "expected_keywords": ["nominee", "director", "prospectus"],
+      "must_cite_min": 1,
+      "expect_ambiguity": false,
+      "expect_abstention": false,
+      "description": "Verifies historical baseline status in 2022 Prospectus."
+    },
+    {
+      "id": "eval-temp-04",
+      "category": "temporal_governance",
+      "question": "Does the regulatory cessation filing supersede the 2022 Prospectus for Suvir Sujan?",
+      "expected_keywords": ["supersede", "yes", "ceased", "vintag"],
+      "must_cite_min": 1,
+      "expect_ambiguity": false,
+      "expect_abstention": false,
+      "description": "Verifies explicit recognition of SUPERSEDES relationship between vintages."
+    },
+    {
+      "id": "eval-rec-01",
+      "category": "reconciled_metrics",
+      "question": "What was Delhivery's FY24 EBITDA across the annual report and earnings deck?",
+      "expected_keywords": ["1,266", "127", "ebitda"],
+      "must_cite_min": 2,
+      "expect_ambiguity": false,
+      "expect_abstention": false,
+      "description": "Case 1: Dual-source corroboration between INR 1,266.41M and 127Cr (0.283% rounding delta)."
+    },
+    {
+      "id": "eval-rec-02",
+      "category": "reconciled_metrics",
+      "question": "What was India's Real GDP growth in FY25?",
+      "expected_keywords": ["6.4", "6.5", "estimate", "gdp"],
+      "must_cite_min": 2,
+      "expect_ambiguity": false,
+      "expect_abstention": false,
+      "description": "Case 3b: Reconciled metric connecting 6.4% First Advance Estimate with 6.5% Official Release."
+    },
+    {
+      "id": "eval-rec-03",
+      "category": "reconciled_metrics",
+      "question": "What was Delhivery's FY23 Adjusted EBITDA across documents?",
+      "expected_keywords": ["452", "ebitda", "loss"],
+      "must_cite_min": 1,
+      "expect_ambiguity": false,
+      "expect_abstention": false,
+      "description": "Reconciliation of negative FY23 EBITDA loss across comparative reporting tables."
+    },
+    {
+      "id": "eval-rec-04",
+      "category": "reconciled_metrics",
+      "question": "Are Delhivery's FY24 EBITDA figures of ₹1,266.41M and ₹127Cr reconciled as the same fact?",
+      "expected_keywords": ["same_as", "reconcil", "consistent", "round", "yes", "0.28"],
+      "must_cite_min": 2,
+      "expect_ambiguity": false,
+      "expect_abstention": false,
+      "description": "Verifies confirmation of SAME_AS reconciliation within 0.5% financial rounding tolerance."
+    },
+    {
+      "id": "eval-abst-01",
+      "category": "mandatory_abstention",
+      "question": "How many active customers does Delhivery have in FY24?",
+      "expected_keywords": ["33,250", "33,278"],
+      "must_cite_min": 2,
+      "expect_ambiguity": false,
+      "expect_abstention": true,
+      "description": "Case 2: Mandatory abstention on 33,250 vs 33,278 discrete count discrepancy without a reconciling footnote."
+    },
+    {
+      "id": "eval-abst-02",
+      "category": "mandatory_abstention",
+      "question": "Why does Delhivery report both 33,250 and 33,278 active customers?",
+      "expected_keywords": ["unresolved", "no footnote", "discrepanc", "diverg", "conflict"],
+      "must_cite_min": 2,
+      "expect_ambiguity": false,
+      "expect_abstention": true,
+      "description": "Verifies that system cites the lack of footnote rather than inventing a reconciliation theory."
+    },
+    {
+      "id": "eval-abst-03",
+      "category": "mandatory_abstention",
+      "question": "Can Delhivery's active customer counts of 33,250 and 33,278 be merged into a single number?",
+      "expected_keywords": ["abstain", "discrete", "cannot", "no", "unresolved", "not merged"],
+      "must_cite_min": 2,
+      "expect_ambiguity": false,
+      "expect_abstention": true,
+      "description": "Verifies discrete count safeguard prevents false merging despite 0.084% delta."
+    },
+    {
+      "id": "eval-abst-04",
+      "category": "mandatory_abstention",
+      "question": "What is the discrepancy between Delhivery's active customer count in the deck vs annual report?",
+      "expected_keywords": ["33,250", "33,278"],
+      "must_cite_min": 2,
+      "expect_ambiguity": false,
+      "expect_abstention": true,
+      "description": "Verifies dual observation reporting with explicit UNRESOLVED label."
+    },
+    {
+      "id": "eval-ambig-01",
+      "category": "ambiguous_inquiry",
+      "question": "What is India's GDP growth?",
+      "expected_keywords": ["fy24", "fy25", "6.4", "6.5"],
+      "must_cite_min": 0,
+      "expect_ambiguity": true,
+      "expect_abstention": false,
+      "description": "Ambiguity gate: unanchored temporal query returns multiple labeled facts rather than a merged single number."
+    },
+    {
+      "id": "eval-ambig-02",
+      "category": "ambiguous_inquiry",
+      "question": "What was Delhivery's Adjusted EBITDA across fiscal years?",
+      "expected_keywords": ["fy23", "fy24", "ebitda"],
+      "must_cite_min": 0,
+      "expect_ambiguity": true,
+      "expect_abstention": false,
+      "description": "Ambiguity gate: multi-period query returns multi-period facts."
+    },
+    {
+      "id": "eval-ambig-03",
+      "category": "ambiguous_inquiry",
+      "question": "What is Delhivery's revenue across fiscal years?",
+      "expected_keywords": ["fy23", "fy24", "revenue"],
+      "must_cite_min": 0,
+      "expect_ambiguity": true,
+      "expect_abstention": false,
+      "description": "Ambiguity gate: revenue inquiry across periods returns distinct facts."
+    },
+    {
+      "id": "eval-ambig-04",
+      "category": "ambiguous_inquiry",
+      "question": "What was Delhivery's total income across fiscal years?",
+      "expected_keywords": ["fy23", "fy24", "income"],
+      "must_cite_min": 0,
+      "expect_ambiguity": true,
+      "expect_abstention": false,
+      "description": "Ambiguity gate: general income inquiry across periods returns distinct facts."
+    },
+    {
+      "id": "eval-apple-01",
+      "category": "generalization_apple",
+      "question": "What was Apple's total net sales reported in its annual 10-K?",
+      "expected_keywords": ["383,285", "383285", "162,560", "94,294", "apple"],
+      "must_cite_min": 1,
+      "expect_ambiguity": false,
+      "expect_abstention": false,
+      "description": "Generalization test on real Apple 10-K filing outside starter dataset."
+    },
+    {
+      "id": "eval-apple-02",
+      "category": "generalization_apple",
+      "question": "What was Apple's iPhone net sales reported in its 10-K?",
+      "expected_keywords": ["200,583", "200583", "iphone", "usd"],
+      "must_cite_min": 1,
+      "expect_ambiguity": false,
+      "expect_abstention": false,
+      "description": "Generalization test on segmented product revenue line item."
+    },
+    {
+      "id": "eval-apple-03",
+      "category": "generalization_apple",
+      "question": "What was Apple's Services net sales reported in its 10-K?",
+      "expected_keywords": ["85,200", "85200", "services", "usd"],
+      "must_cite_min": 1,
+      "expect_ambiguity": false,
+      "expect_abstention": false,
+      "description": "Generalization test on Services segment net sales."
+    },
+    {
+      "id": "eval-apple-04",
+      "category": "generalization_apple",
+      "question": "What was Apple's Products net sales reported in its 10-K?",
+      "expected_keywords": ["298,085", "298085", "products", "usd"],
+      "must_cite_min": 1,
+      "expect_ambiguity": false,
+      "expect_abstention": false,
+      "description": "Generalization test on Products macro segment net sales."
+    },
+    {
+      "id": "eval-trap-01",
+      "category": "hallucination_trap",
+      "question": "What was Delhivery's FY24 profit after tax in US Dollars?",
+      "expected_keywords": ["no grounded", "not reported", "not found", "inr", "rupee", "no mention"],
+      "must_cite_min": 0,
+      "expect_ambiguity": false,
+      "expect_abstention": true,
+      "description": "Hallucination trap: Unreported currency exchange rate. System must abstain rather than fabricate USD conversion."
+    },
+    {
+      "id": "eval-trap-02",
+      "category": "hallucination_trap",
+      "question": "Who is Delhivery's Chief Marketing Officer in FY24?",
+      "expected_keywords": ["no grounded", "not mentioned", "not found", "not named", "no information", "do not include", "no stated", "no cmo"],
+      "must_cite_min": 0,
+      "expect_ambiguity": false,
+      "expect_abstention": true,
+      "description": "Hallucination trap: Missing corporate officer in corpus. System must state ungrounded rather than invent a name."
+    },
+    {
+      "id": "eval-trap-03",
+      "category": "hallucination_trap",
+      "question": "What was Apple's total electric vehicle sales in 2024?",
+      "expected_keywords": ["no grounded", "not mention", "no figure", "not provide", "no observation", "no electric", "do not include", "conflicting", "unspecified"],
+      "must_cite_min": 0,
+      "expect_ambiguity": false,
+      "expect_abstention": true,
+      "description": "Hallucination trap: Fabricated product category. System must explicitly refuse to supply an ungrounded figure."
+    },
+    {
+      "id": "eval-trap-04",
+      "category": "hallucination_trap",
+      "question": "What was Acme Global's FY26 projected revenue?",
+      "expected_keywords": ["no grounded", "not found", "not reported", "no information", "not provide"],
+      "must_cite_min": 0,
+      "expect_ambiguity": false,
+      "expect_abstention": true,
+      "description": "Hallucination trap: Future projection outside corpus documents. System must abstain."
+    }
+  ]
+}
