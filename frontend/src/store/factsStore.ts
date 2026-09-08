@@ -23,6 +23,7 @@ interface FactLoomState {
 
   // Active Evidence target for the Evidence Viewer
   evidenceTarget: EvidenceTarget | null;
+  evidenceTargetVersion: number;
   openEvidence: (target: EvidenceTarget) => void;
 
   // Selected Reconciliation Demo Case
@@ -38,7 +39,12 @@ export const useFactLoomStore = create<FactLoomState>((set) => ({
   setSelectedFactId: (id) => set({ selectedFactId: id }),
 
   evidenceTarget: null,
-  openEvidence: (target) => set({ evidenceTarget: target, activeTab: 'evidence' }),
+  evidenceTargetVersion: 0,
+  openEvidence: (target) => set((state) => ({
+    evidenceTarget: target,
+    evidenceTargetVersion: state.evidenceTargetVersion + 1,
+    activeTab: 'evidence',
+  })),
 
   selectedCaseId: null,
   setSelectedCaseId: (caseId) => set({ selectedCaseId: caseId }),

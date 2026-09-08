@@ -6,6 +6,7 @@ and embeds verified reconciliation reasoning.
 Zero hardcoded starter-set tokens.
 """
 
+import json
 import logging
 from typing import Dict, Any, List, Optional
 from pydantic import BaseModel, Field
@@ -17,14 +18,29 @@ from backend.query.citation_validator import CitationValidator, CitationValidati
 
 logger = logging.getLogger(__name__)
 
+def _parse_bbox(bbox_json: Optional[str]) -> Optional[List[float]]:
+    """Safely parse bbox JSON string to float list."""
+    if not bbox_json:
+        return None
+    try:
+        parsed = json.loads(bbox_json)
+        if isinstance(parsed, list) and len(parsed) == 4:
+            return [float(x) for x in parsed]
+    except (json.JSONDecodeError, ValueError, TypeError):
+        pass
+    return None
+
 class AnswerCitation(BaseModel):
     observation_id: str
     fact_id: str
+    document_id: str = ""
     document_filename: str
     page_number: int
     value: str
     unit: Optional[str] = None
     quote: str
+    quote_span: Optional[str] = None  # alias for quote for frontend compatibility
+    bbox: Optional[List[float]] = None
 
 class QueryAnswerResponse(BaseModel):
     question: str
@@ -130,11 +146,14 @@ class AnswerSynthesizer:
                 citations_list.append(AnswerCitation(
                     observation_id=ob.id,
                     fact_id=ob.fact_id,
+                    document_id=ob.document_id,
                     document_filename=ob.document_filename,
                     page_number=ob.page_number,
                     value=ob.value,
                     unit=ob.unit,
-                    quote=ob.quote_span
+                    quote=ob.quote_span,
+                    quote_span=ob.quote_span,
+                    bbox=_parse_bbox(ob.bbox_json)
                 ))
 
         # Fallback if LLM omitted cite tags: attach all retrieved observations
@@ -143,11 +162,14 @@ class AnswerSynthesizer:
                 citations_list.append(AnswerCitation(
                     observation_id=ob.id,
                     fact_id=ob.fact_id,
+                    document_id=ob.document_id,
                     document_filename=ob.document_filename,
                     page_number=ob.page_number,
                     value=ob.value,
                     unit=ob.unit,
-                    quote=ob.quote_span
+                    quote=ob.quote_span,
+                    quote_span=ob.quote_span,
+                    bbox=_parse_bbox(ob.bbox_json)
                 ))
 
         # Format facts for response

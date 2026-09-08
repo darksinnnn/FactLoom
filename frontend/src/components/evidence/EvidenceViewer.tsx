@@ -24,7 +24,7 @@ interface PageMetadata {
 type ViewMode = 'fit-page' | 'fit-width' | 'manual';
 
 export const EvidenceViewer: React.FC = () => {
-  const { evidenceTarget } = useFactLoomStore();
+  const { evidenceTarget, evidenceTargetVersion } = useFactLoomStore();
   const [documents, setDocuments] = useState<DocumentInfo[]>([]);
   const [selectedDocId, setSelectedDocId] = useState<string>('');
   const [pageNumber, setPageNumber] = useState<number>(1);
@@ -62,25 +62,14 @@ export const EvidenceViewer: React.FC = () => {
     setPageInput(String(pageNumber));
   }, [pageNumber]);
 
-  // Load documents list
+  // Load documents list once on mount — NOT on evidenceTarget changes
   useEffect(() => {
     async function loadDocs() {
       try {
         const docs = await fetchDocuments();
         setDocuments(docs);
-        if (evidenceTarget?.documentId) {
-          const match = docs.find(
-            (d) => d.id === evidenceTarget.documentId || d.filename === evidenceTarget.documentFilename
-          );
-          if (match) {
-            setSelectedDocId(match.id);
-          } else if (docs.length > 0) {
-            setSelectedDocId(docs[0].id);
-          }
-          if (evidenceTarget.pageNumber) {
-            setPageNumber(evidenceTarget.pageNumber);
-          }
-        } else if (docs.length > 0 && !selectedDocId) {
+        // Set default document if no target yet
+        if (!evidenceTarget?.documentId && docs.length > 0) {
           setSelectedDocId(docs[0].id);
         }
       } catch (err) {
@@ -88,22 +77,49 @@ export const EvidenceViewer: React.FC = () => {
       }
     }
     loadDocs();
-  }, [evidenceTarget]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // Handle external evidenceTarget changes
+  // Navigate to citation target — fires every time a new citation is clicked
+  // Uses evidenceTargetVersion as key so same page/doc still triggers update
   useEffect(() => {
-    if (evidenceTarget?.documentId) {
-      const match = documents.find(
+    if (!evidenceTarget) return;
+
+    async function applyTarget() {
+      // Always fetch fresh document list so we can resolve even newly-uploaded docs
+      let docList = documents;
+      if (docList.length === 0) {
+        try {
+          docList = await fetchDocuments();
+          setDocuments(docList);
+        } catch {
+          /* ignore */
+        }
+      }
+
+      // Match doc by id first, then by filename
+      const match = docList.find(
         (d) => d.id === evidenceTarget.documentId || d.filename === evidenceTarget.documentFilename
       );
-      if (match && match.id !== selectedDocId) {
+
+      if (match) {
         setSelectedDocId(match.id);
+      } else if (evidenceTarget.documentId) {
+        // documentId not yet in list (possible if docs loaded before upload finished)
+        setSelectedDocId(evidenceTarget.documentId);
       }
-      if (evidenceTarget.pageNumber && evidenceTarget.pageNumber !== pageNumber) {
+
+      // Unconditionally apply page — no stale-value guard
+      if (evidenceTarget.pageNumber && evidenceTarget.pageNumber >= 1) {
         setPageNumber(evidenceTarget.pageNumber);
+        setPageInput(String(evidenceTarget.pageNumber));
       }
     }
-  }, [evidenceTarget, documents]);
+
+    applyTarget();
+  // evidenceTargetVersion increments on every openEvidence() call
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [evidenceTargetVersion]);
 
   // Load page metadata
   useEffect(() => {
