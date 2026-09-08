@@ -195,6 +195,46 @@ def test_verifier_validates_supersedes_dates():
     assert final["relationship_type"] == "UNRESOLVED"
 
 
+def test_verifier_validates_estimate_vs_actual():
+    verifier = DeterministicVerifier()
+    
+    # Valid case: Observation A is advance estimate, Observation B is official actual release with later date
+    obs_est = {
+        "value": "6.4%",
+        "quote_span": "First Advance Estimate of real GDP growth is 6.4%",
+        "doc_vintage_date": "2024-01-31"
+    }
+    obs_act = {
+        "value": "6.5%",
+        "quote_span": "Real GDP growth stood at 6.5% per official release",
+        "doc_vintage_date": "2024-05-31"
+    }
+    valid_claim = {
+        "relationship_type": "RECONCILED_BY",
+        "dimension": "ESTIMATE_VS_ACTUAL",
+        "justification": "Observation A is an advance estimate reconciled by official release in B",
+        "verified_bool": 1
+    }
+    v_bool, final = verifier.verify(valid_claim, obs_est, obs_act)
+    assert v_bool == 1
+    assert final["relationship_type"] == "RECONCILED_BY"
+
+    # Invalid case 1: Inverted temporal ordering (actual published before estimate)
+    obs_act_early = dict(obs_act, doc_vintage_date="2023-01-01")
+    v_bool, final = verifier.verify(valid_claim, obs_est, obs_act_early)
+    assert v_bool == 0
+    assert final["relationship_type"] == "UNRESOLVED"
+    assert "temporal inversion" in final["justification"]
+
+    # Invalid case 2: Neither observation cites estimate terminology
+    obs_plain1 = {"value": "100", "quote_span": "Net revenue 100", "doc_vintage_date": "2024-01-01"}
+    obs_plain2 = {"value": "120", "quote_span": "Net revenue 120", "doc_vintage_date": "2024-05-01"}
+    v_bool, final = verifier.verify(valid_claim, obs_plain1, obs_plain2)
+    assert v_bool == 0
+    assert final["relationship_type"] == "UNRESOLVED"
+    assert "neither observation cites projection/estimate" in final["justification"]
+
+
 # ---------------------------------------------------------
 # 4. Service Call-Ordering Tests
 # ---------------------------------------------------------

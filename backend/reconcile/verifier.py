@@ -121,6 +121,47 @@ class DeterministicVerifier:
                 decision["verified_bool"] = 1
                 return 1, decision
 
-        # Rule 4: Abstentions and contextual reconciliations are verified
+        # Rule 4: Verify ESTIMATE_VS_ACTUAL claims
+        if dimension == "ESTIMATE_VS_ACTUAL" or (rel_type == "RECONCILED_BY" and "estimate" in justification.lower()):
+            quote_a = (obs_a.get("quote_span") or "").lower()
+            quote_b = (obs_b.get("quote_span") or "").lower()
+            val_a_str = str(obs_a.get("value") or "").lower()
+            val_b_str = str(obs_b.get("value") or "").lower()
+
+            ESTIMATE_TERMS = {"estimate", "advance", "projected", "forecast", "provisional", "target", "budgeted", "budget", "estimated"}
+            ACTUAL_TERMS = {"actual", "official release", "stood at", "final", "reported", "realized", "result", "revised"}
+
+            a_has_est = any(t in quote_a or t in val_a_str for t in ESTIMATE_TERMS)
+            b_has_est = any(t in quote_b or t in val_b_str for t in ESTIMATE_TERMS)
+            a_has_act = any(t in quote_a or t in val_a_str for t in ACTUAL_TERMS)
+            b_has_act = any(t in quote_b or t in val_b_str for t in ACTUAL_TERMS)
+
+            has_valid_asymmetry = (a_has_est and b_has_act) or (b_has_est and a_has_act) or (a_has_est != b_has_est)
+
+            # Check temporal ordering: the actual figure must not predate the estimate vintage
+            vintage_a = obs_a.get("doc_vintage_date")
+            vintage_b = obs_b.get("doc_vintage_date")
+            temporal_valid = True
+            if vintage_a and vintage_b:
+                if a_has_est and b_has_act and vintage_b < vintage_a:
+                    temporal_valid = False
+                elif b_has_est and a_has_act and vintage_a < vintage_b:
+                    temporal_valid = False
+
+            if not has_valid_asymmetry or not temporal_valid:
+                decision["relationship_type"] = "UNRESOLVED"
+                decision["dimension"] = "UNKNOWN"
+                fail_reason = "temporal inversion" if not temporal_valid else "neither observation cites projection/estimate terminology"
+                decision["justification"] = (
+                    f"[Verifier rejection: invalid ESTIMATE_VS_ACTUAL claim ({fail_reason})]. "
+                    f"Original claim: {justification}"
+                )
+                decision["verified_bool"] = 0
+                return 0, decision
+
+            decision["verified_bool"] = 1
+            return 1, decision
+
+        # Rule 5: Abstentions and other verified relationships
         decision["verified_bool"] = 1
         return 1, decision

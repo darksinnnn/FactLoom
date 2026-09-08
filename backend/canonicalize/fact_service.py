@@ -108,20 +108,39 @@ def separate_metric_and_scope(
     d_raw = definition_mention.strip() if definition_mention else ""
     c_raw = claim_text.strip() if claim_text else ""
 
-    # 1. Check if definition_mention indicates a segment/breakdown table:
-    # e.g., "(1) Net sales by reportable segment", "Revenue by geography", "Sales by region"
+    # 1. Structural Breakdown Parser:
+    # Detects arbitrary breakdown tables: "[Metric] by [Dimension]", "Breakdown of [Metric]", "[Metric] breakdown"
+    # Covers geography, product line, business unit, customer bracket, channel, age group, etc.
     m_def = re.search(
-        r'(?:^|\(\d+\)\s*)([A-Za-z\s]+?)\s+by\s+(?:reportable\s+)?(?:segment|geography|region|country|division|product)',
+        r'(?:^|\(\d+\)\s*)([A-Za-z\s]+?)\s+(?:by|breakdown\s+by)\s+(?:reportable\s+|operating\s+)?([A-Za-z\s]+)',
         d_raw,
         re.IGNORECASE
     )
+    if not m_def:
+        m_def = re.search(
+            r'(?:^|\(\d+\)\s*)breakdown\s+of\s+([A-Za-z\s]+)',
+            d_raw,
+            re.IGNORECASE
+        )
+
     if m_def:
         parent_metric = m_def.group(1).strip()
-        # If the metric mention is not the parent metric itself, the mention is the segment label!
-        if parent_metric.lower() not in m_raw.lower():
+        # Clean parent metric if it has leading numbering or punctuation
+        parent_metric = re.sub(r'^\(\d+\)\s*', '', parent_metric).strip()
+        if parent_metric.lower() not in m_raw.lower() and len(parent_metric) >= 3:
             return parent_metric, (s_raw or m_raw)
 
-    # 2. Known geographic, regional, and segmental patterns
+    # 2. Structural Orphaned Row Modifier Attachment:
+    # If the extracted metric is an isolated 1-word qualifier (e.g. 'Basic', 'Diluted', 'Current', 'Class A')
+    # and the surrounding section title or claim contains the primary subject noun
+    STANDALONE_MODIFIERS = {"basic", "diluted", "current", "non-current", "class a", "class b", "domestic", "export"}
+    if m_raw.lower() in STANDALONE_MODIFIERS:
+        for subject_noun in ["shares", "assets", "liabilities", "borrowings", "revenue", "notes", "debt"]:
+            if subject_noun in c_raw.lower() or subject_noun in d_raw.lower():
+                return f"{m_raw} {subject_noun}", s_raw
+
+    # 3. Fallback Gazetteers / Safety Net:
+    # Captures known regional / division tokens if table definition was truncated by PDF stream parser
     GEOGRAPHIC_SEGMENTS = {
         "americas", "europe", "greater china", "china", "japan",
         "rest of asia pacific", "asia pacific", "apac", "emea",
@@ -137,11 +156,6 @@ def separate_metric_and_scope(
                 inferred_metric = cand_metric
 
         return inferred_metric, (s_raw or m_raw)
-
-    # 3. Contextualize standalone EPS modifier rows (Basic / Diluted share counts)
-    if m_raw.lower() in {"basic", "diluted"}:
-        if "share" in c_raw.lower() or "share" in d_raw.lower():
-            return f"{m_raw} shares", s_raw
 
     return m_raw, s_raw
 
