@@ -136,6 +136,8 @@ class ReconciliationService:
                 JOIN documents d1 ON o1.document_id = d1.id
                 JOIN documents d2 ON o2.document_id = d2.id
                 WHERE f1.id != f2.id
+                  AND (f1.scope IS NULL OR f2.scope IS NULL OR f1.scope = f2.scope)
+                  AND (d1.id != d2.id OR o1.doc_vintage_date != o2.doc_vintage_date)
             """).fetchall()
 
             for cp in near_candidate_pairs:

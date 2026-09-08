@@ -21,7 +21,9 @@ MODEL_ROUTING = {
     "canonicalizer_fast": "openai/gpt-oss-120b",
     "canonicalizer_adjudicator": "openai/gpt-oss-120b",
     "reconciliation_adjudicator": "openai/gpt-oss-120b",
+    "query_parser": "openai/gpt-oss-120b",
     "answer_composer": "openai/gpt-oss-120b",
+    "answer_synthesizer": "openai/gpt-oss-120b",
     "vision_fallback": "meta-llama/llama-4-maverick-17b-128e-instruct"
 }
 
@@ -49,7 +51,7 @@ class GroqClient:
                 "GROQ_API_KEY is not configured. Please add your Groq API key to .env"
             )
 
-        model = MODEL_ROUTING.get(model_role, model_role)
+        model = MODEL_ROUTING.get(model_role, "openai/gpt-oss-120b")
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json"
