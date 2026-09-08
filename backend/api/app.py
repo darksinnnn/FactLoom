@@ -124,6 +124,46 @@ def get_page(document_id: str, page_number: int):
     return res
 
 
+@app.get("/documents/{document_id}/pdf")
+def get_document_pdf(document_id: str):
+    """Streams the raw PDF file for in-browser PDF.js rendering."""
+    from fastapi.responses import FileResponse
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT file_path, filename FROM documents WHERE id = ?", (document_id,))
+    row = cursor.fetchone()
+    conn.close()
+    if not row or not row["file_path"] or not os.path.exists(row["file_path"]):
+        raise HTTPException(status_code=404, detail="Document file not found on disk")
+    return FileResponse(row["file_path"], media_type="application/pdf", filename=row["filename"])
+
+
+@app.get("/documents/{document_id}/pages/{page_number}/image")
+def get_page_image(document_id: str, page_number: int):
+    """Renders a high-resolution PNG image of the PDF page with PyMuPDF."""
+    from fastapi.responses import Response
+    import pymupdf
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT file_path FROM documents WHERE id = ?", (document_id,))
+    row = cursor.fetchone()
+    conn.close()
+    if not row or not row["file_path"] or not os.path.exists(row["file_path"]):
+        raise HTTPException(status_code=404, detail="Document not found")
+    
+    doc = pymupdf.open(row["file_path"])
+    if page_number < 1 or page_number > len(doc):
+        raise HTTPException(status_code=404, detail=f"Page {page_number} out of range (1-{len(doc)})")
+    
+    page = doc[page_number - 1]
+    # Render at 150 DPI (matrix 2.0833) for crisp text
+    zoom = 150 / 72.0
+    mat = pymupdf.Matrix(zoom, zoom)
+    pix = page.get_pixmap(matrix=mat, alpha=False)
+    img_bytes = pix.tobytes("png")
+    return Response(content=img_bytes, media_type="image/png")
+
+
 # ---------------------------------------------------------
 # Facts & Relationships Endpoints
 # ---------------------------------------------------------
@@ -191,7 +231,7 @@ def get_fact_detail(fact_id: str):
     if obs_ids:
         placeholders = ",".join(["?"] * len(obs_ids))
         rel_rows = cursor.execute(f"""
-            SELECT * FROM relationships
+            SELECT r.*, r.type as relationship_type FROM relationships r
             WHERE observation_a_id IN ({placeholders})
                OR observation_b_id IN ({placeholders})
         """, obs_ids + obs_ids).fetchall()
@@ -210,7 +250,7 @@ def list_relationships():
     conn = get_connection()
     cursor = conn.cursor()
     rows = cursor.execute("""
-        SELECT r.*,
+        SELECT r.*, r.type as relationship_type,
                oa.value as value_a, oa.unit as unit_a, oa.quote_span as quote_a,
                ob.value as value_b, ob.unit as unit_b, ob.quote_span as quote_b,
                da.filename as doc_a, db.filename as doc_b
