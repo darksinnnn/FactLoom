@@ -1,0 +1,45 @@
+# FactLoom Git Ignore
+
+# User specified ignore
+Docs/
+docs/
+scratch/
+Scratch/
+
+# Python Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Python cache & artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+
+# Node / Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Database / Local storage
+*.db
+*.sqlite3
+*.sqlite
+factloom.db
+
+# OS / Editor artifacts
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
