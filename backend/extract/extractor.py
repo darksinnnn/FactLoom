@@ -117,15 +117,15 @@ class FactExtractor:
             resolved_bbox = self._locate_bbox_for_quote(cand.quote_span, page.text_blocks)
 
             verified_records.append({
-                "entity_mention": cand.entity_mention.strip(),
-                "metric_mention": cand.metric_mention.strip(),
+                "entity_mention": cand.entity_mention.strip() if cand.entity_mention else "Unknown Entity",
+                "metric_mention": cand.metric_mention.strip() if cand.metric_mention else "Unknown Metric",
                 "value": val_clean,
                 "unit": cand.unit.strip() if cand.unit else None,
                 "period_mention": cand.period_mention.strip() if cand.period_mention else None,
                 "scope_mention": cand.scope_mention.strip() if cand.scope_mention else None,
                 "definition_mention": cand.definition_mention.strip() if cand.definition_mention else None,
-                "claim_text": cand.claim_text.strip(),
-                "quote_span": normalized_quote or cand.quote_span.strip(),
+                "claim_text": cand.claim_text.strip() if cand.claim_text else "",
+                "quote_span": normalized_quote or (cand.quote_span.strip() if cand.quote_span else ""),
                 "confidence": cand.confidence,
                 "page_number": page.page_number,
                 "bbox": resolved_bbox

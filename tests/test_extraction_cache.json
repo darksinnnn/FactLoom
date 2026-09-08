@@ -1,0 +1,842 @@
+{
+  "ar_p36": [
+    {
+      "entity_mention": "Delhivery Limited",
+      "metric_mention": "Revenue from contracts with customers",
+      "value": "81,415.38",
+      "unit": "million rupees",
+      "period_mention": "FY2024",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Delhivery Limited reported revenue from contracts with customers of \u20b981,415.38 million for FY2024.",
+      "quote_span": "81,415.38",
+      "confidence": 0.99,
+      "page_number": 36,
+      "bbox": [
+        53.02,
+        355.19,
+        548.84,
+        552.82
+      ]
+    },
+    {
+      "entity_mention": "Delhivery Limited",
+      "metric_mention": "Revenue from contracts with customers",
+      "value": "72,253.01",
+      "unit": "million rupees",
+      "period_mention": "FY2023",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Delhivery Limited reported revenue from contracts with customers of \u20b972,253.01 million for FY2023.",
+      "quote_span": "72,253.01",
+      "confidence": 0.99,
+      "page_number": 36,
+      "bbox": [
+        53.02,
+        355.19,
+        548.84,
+        552.82
+      ]
+    },
+    {
+      "entity_mention": "Delhivery Limited",
+      "metric_mention": "Total income",
+      "value": "85,942.34",
+      "unit": "million rupees",
+      "period_mention": "FY2024",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Delhivery Limited's total income was \u20b985,942.34 million for FY2024.",
+      "quote_span": "85,942.34",
+      "confidence": 0.99,
+      "page_number": 36,
+      "bbox": [
+        53.02,
+        355.19,
+        548.84,
+        552.82
+      ]
+    },
+    {
+      "entity_mention": "Delhivery Limited",
+      "metric_mention": "EBITDA",
+      "value": "1,266.41",
+      "unit": "million rupees",
+      "period_mention": "FY2024",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Delhivery Limited generated EBITDA of \u20b91,266.41 million for FY2024.",
+      "quote_span": "1,266.41",
+      "confidence": 0.99,
+      "page_number": 36,
+      "bbox": [
+        53.02,
+        355.19,
+        548.84,
+        552.82
+      ]
+    },
+    {
+      "entity_mention": "Delhivery Limited",
+      "metric_mention": "Adjusted EBITDA",
+      "value": "757.86",
+      "unit": "million rupees",
+      "period_mention": "FY2024",
+      "scope_mention": null,
+      "definition_mention": "Non\u2011GAAP measure that excludes non\u2011cash, non\u2011recurring items.",
+      "claim_text": "Adjusted EBITDA for Delhivery Limited was \u20b9757.86 million for FY2024.",
+      "quote_span": "757.86",
+      "confidence": 0.99,
+      "page_number": 36,
+      "bbox": [
+        53.02,
+        355.19,
+        548.84,
+        552.82
+      ]
+    },
+    {
+      "entity_mention": "Delhivery Limited",
+      "metric_mention": "Freight, Handling and Servicing Costs",
+      "value": "59,707.49",
+      "unit": "million rupees",
+      "period_mention": "FY2024",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Freight, handling and servicing costs amounted to \u20b959,707.49 million for FY2024.",
+      "quote_span": "59,707.49",
+      "confidence": 0.99,
+      "page_number": 36,
+      "bbox": [
+        53.02,
+        355.19,
+        548.84,
+        552.82
+      ]
+    },
+    {
+      "entity_mention": "Delhivery Limited",
+      "metric_mention": "Employee benefits expense",
+      "value": "14,367.70",
+      "unit": "million rupees",
+      "period_mention": "FY2024",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Employee benefits expense was \u20b914,367.70 million for FY2024.",
+      "quote_span": "14,367.70",
+      "confidence": 0.99,
+      "page_number": 36,
+      "bbox": [
+        53.02,
+        355.19,
+        548.84,
+        552.82
+      ]
+    },
+    {
+      "entity_mention": "Delhivery Limited",
+      "metric_mention": "Profit/(Loss) for the period",
+      "value": "(2,491.86)",
+      "unit": "million rupees",
+      "period_mention": "FY2024",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Delhivery Limited incurred a loss of \u20b92,491.86 million for FY2024.",
+      "quote_span": "(2,491.86)",
+      "confidence": 0.99,
+      "page_number": 36,
+      "bbox": [
+        53.02,
+        355.19,
+        548.84,
+        552.82
+      ]
+    },
+    {
+      "entity_mention": "Delhivery Limited",
+      "metric_mention": "Revenues from express parcel services",
+      "value": "50,765.87",
+      "unit": "million rupees",
+      "period_mention": "FY2024",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Revenues from express parcel services were \u20b950,765.87 million for FY2024.",
+      "quote_span": "50,765.87",
+      "confidence": 0.99,
+      "page_number": 36,
+      "bbox": [
+        52.98,
+        641.47,
+        545.77,
+        733.9
+      ]
+    },
+    {
+      "entity_mention": "Delhivery Limited",
+      "metric_mention": "Revenues from express parcel services",
+      "value": "45,522.22",
+      "unit": "million rupees",
+      "period_mention": "FY2023",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Revenues from express parcel services were \u20b945,522.22 million for FY2023.",
+      "quote_span": "45,522.22",
+      "confidence": 0.99,
+      "page_number": 36,
+      "bbox": [
+        52.98,
+        641.47,
+        545.77,
+        733.9
+      ]
+    },
+    {
+      "entity_mention": "Delhivery Limited",
+      "metric_mention": "Revenues from part truckload services",
+      "value": "15,174.05",
+      "unit": "million rupees",
+      "period_mention": "FY2024",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Revenues from part truckload services amounted to \u20b915,174.05 million for FY2024.",
+      "quote_span": "15,174.05",
+      "confidence": 0.99,
+      "page_number": 36,
+      "bbox": [
+        52.98,
+        641.47,
+        545.77,
+        733.9
+      ]
+    },
+    {
+      "entity_mention": "Delhivery Limited",
+      "metric_mention": "Revenues from part truckload services",
+      "value": "11,565.38",
+      "unit": "million rupees",
+      "period_mention": "FY2023",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Revenues from part truckload services amounted to \u20b911,565.38 million for FY2023.",
+      "quote_span": "11,565.38",
+      "confidence": 0.99,
+      "page_number": 36,
+      "bbox": [
+        52.98,
+        641.47,
+        545.77,
+        733.9
+      ]
+    },
+    {
+      "entity_mention": "Delhivery Limited",
+      "metric_mention": "Revenues from truckload services",
+      "value": "6,087.96",
+      "unit": "million rupees",
+      "period_mention": "FY2024",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Revenues from truckload services were \u20b96,087.96 million for FY2024.",
+      "quote_span": "6,087.96",
+      "confidence": 0.99,
+      "page_number": 36,
+      "bbox": [
+        52.98,
+        641.47,
+        545.77,
+        733.9
+      ]
+    },
+    {
+      "entity_mention": "Delhivery Limited",
+      "metric_mention": "Revenues from truckload services",
+      "value": "4,362.17",
+      "unit": "million rupees",
+      "period_mention": "FY2023",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Revenues from truckload services were \u20b94,362.17 million for FY2023.",
+      "quote_span": "4,362.17",
+      "confidence": 0.99,
+      "page_number": 36,
+      "bbox": [
+        52.98,
+        641.47,
+        545.77,
+        733.9
+      ]
+    },
+    {
+      "entity_mention": "Delhivery Limited",
+      "metric_mention": "Revenues from supply chain services",
+      "value": "7,760.29",
+      "unit": "million rupees",
+      "period_mention": "FY2024",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Revenues from supply chain services were \u20b97,760.29 million for FY2024.",
+      "quote_span": "7,760.29",
+      "confidence": 0.99,
+      "page_number": 36,
+      "bbox": [
+        52.98,
+        641.47,
+        545.77,
+        733.9
+      ]
+    },
+    {
+      "entity_mention": "Delhivery Limited",
+      "metric_mention": "Revenues from supply chain services",
+      "value": "7,817.47",
+      "unit": "million rupees",
+      "period_mention": "FY2023",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Revenues from supply chain services were \u20b97,817.47 million for FY2023.",
+      "quote_span": "7,817.47",
+      "confidence": 0.99,
+      "page_number": 36,
+      "bbox": [
+        52.98,
+        641.47,
+        545.77,
+        733.9
+      ]
+    },
+    {
+      "entity_mention": "Delhivery Limited",
+      "metric_mention": "Revenues from cross-border services",
+      "value": "1,525.31",
+      "unit": "million rupees",
+      "period_mention": "FY2024",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Revenues from cross-border services were \u20b91,525.31 million for FY2024.",
+      "quote_span": "1,525.31",
+      "confidence": 0.99,
+      "page_number": 36,
+      "bbox": [
+        52.98,
+        641.47,
+        545.77,
+        733.9
+      ]
+    },
+    {
+      "entity_mention": "Delhivery Limited",
+      "metric_mention": "Revenues from cross-border services",
+      "value": "2,957.68",
+      "unit": "million rupees",
+      "period_mention": "FY2023",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Revenues from cross-border services were \u20b92,957.68 million for FY2023.",
+      "quote_span": "2,957.68",
+      "confidence": 0.99,
+      "page_number": 36,
+      "bbox": [
+        52.98,
+        641.47,
+        545.77,
+        733.9
+      ]
+    }
+  ],
+  "deck_p17": [
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "Revenue for services",
+      "value": "7,224",
+      "unit": "\u20b9 Cr",
+      "period_mention": "FY23",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Revenue for services was \u20b97,224\u202fCr in FY23.",
+      "quote_span": "7,224",
+      "confidence": 0.99,
+      "page_number": 17,
+      "bbox": [
+        52.66,
+        127.53,
+        900.69,
+        139.63
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "Revenue for services",
+      "value": "8,142",
+      "unit": "\u20b9 Cr",
+      "period_mention": "FY24",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Revenue for services was \u20b98,142\u202fCr in FY24.",
+      "quote_span": "8,142",
+      "confidence": 0.99,
+      "page_number": 17,
+      "bbox": [
+        52.66,
+        127.53,
+        900.69,
+        139.63
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "Revenue from traded goods",
+      "value": "2",
+      "unit": "\u20b9 Cr",
+      "period_mention": "FY23",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Revenue from traded goods was \u20b92\u202fCr in FY23.",
+      "quote_span": "2",
+      "confidence": 0.99,
+      "page_number": 17,
+      "bbox": [
+        52.66,
+        87.76,
+        900.91,
+        99.75
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "Revenue from customers",
+      "value": "7,225",
+      "unit": "\u20b9 Cr",
+      "period_mention": "FY23",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Revenue from customers was \u20b97,225\u202fCr in FY23.",
+      "quote_span": "7,225",
+      "confidence": 0.99,
+      "page_number": 17,
+      "bbox": [
+        52.66,
+        164.25,
+        900.69,
+        176.35
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "Revenue from customers",
+      "value": "8,142",
+      "unit": "\u20b9 Cr",
+      "period_mention": "FY24",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Revenue from customers was \u20b98,142\u202fCr in FY24.",
+      "quote_span": "8,142",
+      "confidence": 0.99,
+      "page_number": 17,
+      "bbox": [
+        52.66,
+        127.53,
+        900.69,
+        139.63
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "Other income",
+      "value": "305",
+      "unit": "\u20b9 Cr",
+      "period_mention": "FY23",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Other income was \u20b9305\u202fCr in FY23.",
+      "quote_span": "305",
+      "confidence": 0.99,
+      "page_number": 17,
+      "bbox": [
+        52.66,
+        182.61,
+        900.69,
+        194.71
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "Other income",
+      "value": "453",
+      "unit": "\u20b9 Cr",
+      "period_mention": "FY24",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Other income was \u20b9453\u202fCr in FY24.",
+      "quote_span": "453",
+      "confidence": 0.99,
+      "page_number": 17,
+      "bbox": [
+        52.66,
+        182.61,
+        900.69,
+        194.71
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "Total income",
+      "value": "7,530",
+      "unit": "\u20b9 Cr",
+      "period_mention": "FY23",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Total income was \u20b97,530\u202fCr in FY23.",
+      "quote_span": "7,530",
+      "confidence": 0.99,
+      "page_number": 17,
+      "bbox": [
+        52.66,
+        200.94,
+        900.71,
+        213.08
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "Total income",
+      "value": "8,594",
+      "unit": "\u20b9 Cr",
+      "period_mention": "FY24",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Total income was \u20b98,594\u202fCr in FY24.",
+      "quote_span": "8,594",
+      "confidence": 0.99,
+      "page_number": 17,
+      "bbox": [
+        52.66,
+        200.94,
+        900.71,
+        213.08
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "Total freight, handling and servicing cost",
+      "value": "5,669",
+      "unit": "\u20b9 Cr",
+      "period_mention": "FY23",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Total freight, handling and servicing cost was \u20b95,669\u202fCr in FY23.",
+      "quote_span": "5,669",
+      "confidence": 0.99,
+      "page_number": 17,
+      "bbox": [
+        52.66,
+        238.43,
+        897.93,
+        249.82
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "Total freight, handling and servicing cost",
+      "value": "5,971",
+      "unit": "\u20b9 Cr",
+      "period_mention": "FY24",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Total freight, handling and servicing cost was \u20b95,971\u202fCr in FY24.",
+      "quote_span": "5,971",
+      "confidence": 0.99,
+      "page_number": 17,
+      "bbox": [
+        52.66,
+        238.43,
+        897.93,
+        249.82
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "Employee benefit expense excl. share based payments",
+      "value": "1,111",
+      "unit": "\u20b9 Cr",
+      "period_mention": "FY23",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Employee benefit expense excl. share based payments was \u20b91,111\u202fCr in FY23.",
+      "quote_span": "1,111",
+      "confidence": 0.99,
+      "page_number": 17,
+      "bbox": [
+        69.1,
+        274.62,
+        897.93,
+        286.01
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "Employee benefit expense excl. share based payments",
+      "value": "1,211",
+      "unit": "\u20b9 Cr",
+      "period_mention": "FY24",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Employee benefit expense excl. share based payments was \u20b91,211\u202fCr in FY24.",
+      "quote_span": "1,211",
+      "confidence": 0.99,
+      "page_number": 17,
+      "bbox": [
+        69.1,
+        274.62,
+        897.93,
+        286.01
+      ]
+    },
+    {
+      "entity_mention": "Reporting entity (not named in excerpt)",
+      "metric_mention": "Employee benefit expense: share based payments",
+      "value": "226",
+      "unit": "\u20b9 Cr",
+      "period_mention": "FY24",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Employee benefit expense from share based payments was \u20b9226 crore for FY24.",
+      "quote_span": "226",
+      "confidence": 0.92,
+      "page_number": 17,
+      "bbox": [
+        69.1,
+        292.42,
+        904.03,
+        303.85
+      ]
+    },
+    {
+      "entity_mention": "Reporting entity (not named in excerpt)",
+      "metric_mention": "Employee benefit expense: share based payments",
+      "value": "(21.8%)",
+      "unit": "%",
+      "period_mention": "FY24",
+      "scope_mention": "YoY",
+      "definition_mention": null,
+      "claim_text": "Employee benefit expense from share based payments decreased by 21.8% year-over-year in FY24.",
+      "quote_span": "(21.8%)",
+      "confidence": 0.92,
+      "page_number": 17,
+      "bbox": [
+        69.1,
+        292.42,
+        904.03,
+        303.85
+      ]
+    },
+    {
+      "entity_mention": "Reporting entity (not named in excerpt)",
+      "metric_mention": "Other operating expense",
+      "value": "607",
+      "unit": "\u20b9 Cr",
+      "period_mention": "FY24",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Other operating expense was \u20b9607 crore for FY24.",
+      "quote_span": "607",
+      "confidence": 0.92,
+      "page_number": 17,
+      "bbox": [
+        52.66,
+        311.77,
+        897.93,
+        323.16
+      ]
+    },
+    {
+      "entity_mention": "Reporting entity (not named in excerpt)",
+      "metric_mention": "Other operating expense",
+      "value": "0.3%",
+      "unit": "%",
+      "period_mention": "FY24",
+      "scope_mention": "YoY",
+      "definition_mention": null,
+      "claim_text": "Other operating expense increased by 0.3% year-over-year in FY24.",
+      "quote_span": "0.3%",
+      "confidence": 0.92,
+      "page_number": 17,
+      "bbox": [
+        52.66,
+        311.77,
+        897.93,
+        323.16
+      ]
+    },
+    {
+      "entity_mention": "Reporting entity (not named in excerpt)",
+      "metric_mention": "Finance costs",
+      "value": "89",
+      "unit": "\u20b9 Cr",
+      "period_mention": "FY24",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Finance costs were \u20b989 crore for FY24.",
+      "quote_span": "89",
+      "confidence": 0.92,
+      "page_number": 17,
+      "bbox": [
+        69.1,
+        292.42,
+        904.03,
+        303.85
+      ]
+    },
+    {
+      "entity_mention": "Reporting entity (not named in excerpt)",
+      "metric_mention": "Finance costs",
+      "value": "(0.3%)",
+      "unit": "%",
+      "period_mention": "FY24",
+      "scope_mention": "YoY",
+      "definition_mention": null,
+      "claim_text": "Finance costs decreased by 0.3% year-over-year in FY24.",
+      "quote_span": "(0.3%)",
+      "confidence": 0.92,
+      "page_number": 17,
+      "bbox": [
+        52.66,
+        331.07,
+        901.24,
+        342.46
+      ]
+    },
+    {
+      "entity_mention": "Reporting entity (not named in excerpt)",
+      "metric_mention": "Depreciation and amortisation expense",
+      "value": "722",
+      "unit": "\u20b9 Cr",
+      "period_mention": "FY24",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Depreciation and amortisation expense was \u20b9722 crore for FY24.",
+      "quote_span": "722",
+      "confidence": 0.92,
+      "page_number": 17,
+      "bbox": [
+        52.66,
+        349.43,
+        904.02,
+        360.82
+      ]
+    },
+    {
+      "entity_mention": "Reporting entity (not named in excerpt)",
+      "metric_mention": "Depreciation and amortisation expense",
+      "value": "(13.2%)",
+      "unit": "%",
+      "period_mention": "FY24",
+      "scope_mention": "YoY",
+      "definition_mention": null,
+      "claim_text": "Depreciation and amortisation expense decreased by 13.2% year-over-year in FY24.",
+      "quote_span": "(13.2%)",
+      "confidence": 0.92,
+      "page_number": 17,
+      "bbox": [
+        52.66,
+        349.43,
+        904.02,
+        360.82
+      ]
+    },
+    {
+      "entity_mention": "Reporting entity (not named in excerpt)",
+      "metric_mention": "Total expenses",
+      "value": "8,825",
+      "unit": "\u20b9 Cr",
+      "period_mention": "FY24",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "Total expenses were \u20b98,825 crore for FY24.",
+      "quote_span": "8,825",
+      "confidence": 0.95,
+      "page_number": 17,
+      "bbox": [
+        52.66,
+        367.76,
+        897.93,
+        379.18
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "EBITDA",
+      "value": "(452)",
+      "unit": "\u20b9 Cr",
+      "period_mention": "FY23",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "The company reported EBITDA of (452)\u202f\u20b9\u202fCr for FY23.",
+      "quote_span": "(452)",
+      "confidence": 0.98,
+      "page_number": 17,
+      "bbox": [
+        52.66,
+        492.99,
+        825.6,
+        504.39
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "EBITDA",
+      "value": "127",
+      "unit": "\u20b9 Cr",
+      "period_mention": "FY24",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "The company reported EBITDA of 127\u202f\u20b9\u202fCr for FY24.",
+      "quote_span": "127",
+      "confidence": 0.98,
+      "page_number": 17,
+      "bbox": [
+        52.66,
+        492.99,
+        825.6,
+        504.39
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "EBITDA margin",
+      "value": "(6.3%)",
+      "unit": "%",
+      "period_mention": "FY23",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "The EBITDA margin was (6.3%) in FY23.",
+      "quote_span": "(6.3%)",
+      "confidence": 0.98,
+      "page_number": 17,
+      "bbox": [
+        49.61,
+        511.35,
+        945.81,
+        534.14
+      ]
+    },
+    {
+      "entity_mention": "Unknown Entity",
+      "metric_mention": "EBITDA margin",
+      "value": "1.6%",
+      "unit": "%",
+      "period_mention": "FY24",
+      "scope_mention": null,
+      "definition_mention": null,
+      "claim_text": "The EBITDA margin was 1.6% in FY24.",
+      "quote_span": "1.6%",
+      "confidence": 0.98,
+      "page_number": 17,
+      "bbox": [
+        52.66,
+        127.53,
+        900.69,
+        139.63
+      ]
+    }
+  ]
+}

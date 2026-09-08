@@ -13,11 +13,14 @@ CRITICAL GROUNDING RULES:
 
 EXTRACTION GUIDELINES:
 1. Extract atomic factual claims: key performance indicators, revenue lines, expense lines, operational results, profit/loss, margins, growth rates, governance directorships and resignations, macroeconomic estimates, and statistical indices.
-2. For line items in tables, capture the row label and column context in `metric_mention` and any qualification in `definition_mention`.
-3. When a table reports multiple periods or columns (e.g. full-year annual totals, prior years, or quarters), extract the full-year / latest period figures for all line items across the entire table.
-4. Separate adjacent but distinct line items (for instance, operational service revenue vs total income).
-5. Preserve numerical precision in `value` exactly as stated (do not round or abbreviate).
-6. Identify the reporting entity in `entity_mention`, the temporal anchor in `period_mention`, and the scope in `scope_mention`.
+2. For line items in tables, capture the pure row concept label as `metric_mention` (for example, "Employee benefit expense", "Other income", "Revenue from customers").
+3. CRITICAL FIELD ISOLATION:
+   - NEVER append or fold reporting periods, years, quarters, dates, or vintages (such as "FY24", "FY23", "Q4", "2024", "March 31") into `metric_mention`. All temporal qualifiers MUST be kept strictly isolated inside `period_mention`.
+   - NEVER fold units, currencies, or scale symbols into `metric_mention`. Keep all unit qualifiers strictly isolated inside `unit`.
+4. When a table reports multiple periods or columns (e.g. full-year annual totals, prior years, or quarters), extract the full-year / latest period figures for all line items across the entire table.
+5. Separate adjacent but distinct line items (for instance, operational service revenue vs total income).
+6. Preserve numerical precision in `value` exactly as stated (do not round or abbreviate).
+7. Identify the reporting entity in `entity_mention`, the temporal anchor in `period_mention`, and the scope in `scope_mention`.
 
 OUTPUT FORMAT:
 Return a valid JSON object matching this structure:
@@ -25,10 +28,10 @@ Return a valid JSON object matching this structure:
   "candidates": [
     {
       "entity_mention": "Entity name",
-      "metric_mention": "Metric or line-item name with row/column context",
+      "metric_mention": "Pure metric or line-item name (strictly without period, date, or unit appended)",
       "value": "Verbatim value (e.g. 1,234.56, 12.5%, 450)",
       "unit": "Unit (e.g. currency, %, million, crore, count) or null",
-      "period_mention": "Reporting period, quarter, year, or date or null",
+      "period_mention": "Reporting period, quarter, year, or date or null (isolated from metric_mention)",
       "scope_mention": "Scope or null",
       "definition_mention": "Context, formula, or footnote qualification or null",
       "claim_text": "One-sentence factual paraphrase",

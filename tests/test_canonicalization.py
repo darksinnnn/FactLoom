@@ -1,0 +1,54 @@
+"""
+Unit tests for FactLoom Canonicalization & Registry Engine.
+Tests normalization, defense-in-depth period stripping, modifier guards, and threshold safety.
+"""
+
+import pytest
+from backend.canonicalize.registry import RegistryEngine
+from backend.canonicalize.embedder import EmbeddingEngine
+
+def test_clean_metric_mention_strips_leaked_periods_and_units():
+    test_cases = {
+        "Employee benefit expense excl. share based payments FY24": "Employee benefit expense excl. share based payments",
+        "Other income FY23": "Other income",
+        "Revenue from customers (A+B) FY23": "Revenue from customers (A+B)",
+        "Total freight, handling and servicing cost FY23": "Total freight, handling and servicing cost",
+        "EBITDA (₹Cr)": "EBITDA",
+        "Revenue (in INR Million)": "Revenue",
+        "Operating Profit March 31, 2024": "Operating Profit",
+        "Net Sales Q4 FY24": "Net Sales",
+        "Net Profit 2023-24": "Net Profit"
+    }
+    for raw, expected in test_cases.items():
+        assert RegistryEngine.clean_metric_mention(raw) == expected
+
+def test_clean_entity_mention_normalizes_legal_suffixes():
+    test_cases = {
+        "Delhivery Limited": "Delhivery",
+        "Delhivery Ltd.": "Delhivery",
+        "Acme Global Technologies Inc.": "Acme Global Technologies",
+        "Globex Corporation": "Globex"
+    }
+    for raw, expected in test_cases.items():
+        assert RegistryEngine.clean_entity_mention(raw) == expected
+
+def test_has_modifier_mismatch_detects_accounting_qualifiers():
+    assert RegistryEngine.has_modifier_mismatch("Adjusted EBITDA", "EBITDA") is True
+    assert RegistryEngine.has_modifier_mismatch("Core Operating Profit", "Operating Profit") is True
+    assert RegistryEngine.has_modifier_mismatch("Gross Revenue", "Net Revenue") is True
+    assert RegistryEngine.has_modifier_mismatch("EBITDA", "EBITDA") is False
+
+def test_empirical_threshold_guards():
+    e = EmbeddingEngine.get_instance()
+    
+    # Negative control: completely distinct concepts must score well below lower threshold (0.65)
+    v_rev = e.embed_text("Revenue from services")
+    v_inc = e.embed_text("Total income")
+    sim_neg = e.cosine_similarity(v_rev, v_inc)
+    assert sim_neg < 0.65, f"Expected < 0.65, got {sim_neg:.4f}"
+
+    # Semantic divergence risk: PTL freight revenue vs tonnage must score below upper threshold (0.88)
+    v_pr = e.embed_text("PTL freight revenue")
+    v_pt = e.embed_text("PTL freight tonnage")
+    sim_risk = e.cosine_similarity(v_pr, v_pt)
+    assert sim_risk < 0.88, f"Expected < 0.88 to avoid false merge, got {sim_risk:.4f}"

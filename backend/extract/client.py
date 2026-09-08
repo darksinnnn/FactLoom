@@ -17,8 +17,8 @@ logger = logging.getLogger(__name__)
 
 # Model Routing per agents.md
 MODEL_ROUTING = {
-    "extractor": "openai/gpt-oss-20b",
-    "canonicalizer_fast": "openai/gpt-oss-20b",
+    "extractor": "openai/gpt-oss-120b",
+    "canonicalizer_fast": "openai/gpt-oss-120b",
     "canonicalizer_adjudicator": "openai/gpt-oss-120b",
     "reconciliation_adjudicator": "openai/gpt-oss-120b",
     "answer_composer": "openai/gpt-oss-120b",
@@ -95,11 +95,20 @@ class GroqClient:
                                     retry_after = float(match.group(1)) + 1.0
                         except Exception:
                             pass
-                        
-                        wait_time = max(delay, retry_after)
+
+                        # If rate limit wait is large, fall back to alternative model
+                        if retry_after > 20.0:
+                            alt_model = "qwen/qwen3.8-27b" if "120b" in payload.get("model", "") else "openai/gpt-oss-120b"
+                            if payload.get("model") != alt_model:
+                                logger.warning(f"Large wait ({retry_after:.1f}s) on {payload.get('model')}. Falling back immediately to {alt_model}...")
+                                payload["model"] = alt_model
+                                time.sleep(1.0)
+                                continue
+
+                        wait_time = max(delay, retry_after) + 1.0
                         logger.warning(f"Groq 429 rate limit hit. Waiting {wait_time:.2f}s before retry (attempt {attempt+1}/{max_retries})...")
                         time.sleep(wait_time)
-                        delay = max(wait_time * 1.5, 4.0)
+                        delay = max(wait_time * 1.2, 4.0)
                     else:
                         err_msg = f"Groq API error {resp.status_code}: {resp.text}"
                         logger.error(err_msg)
