@@ -103,8 +103,11 @@ export const FactList: React.FC = () => {
       {/* Main Split View: Fact Master List (Left) + Detail Morph (Right) */}
       <div className="grid lg:grid-cols-12 gap-6 items-start">
         {/* Facts Table */}
-        <div className="lg:col-span-6 bg-[var(--loom-card)]/50 border border-[var(--loom-card-border)] rounded-lg overflow-hidden">
-          <div className="px-4 py-3 border-b border-[var(--loom-card-border)] bg-[var(--loom-surface)] flex items-center justify-between">
+        <div 
+          data-lenis-prevent
+          className="lg:col-span-6 bg-[var(--loom-card)]/50 border border-[var(--loom-card-border)] rounded-lg overflow-hidden flex flex-col"
+        >
+          <div className="px-4 py-3 border-b border-[var(--loom-card-border)] bg-[var(--loom-surface)] flex items-center justify-between shrink-0">
             <span className="font-mono-tabular text-xs font-semibold text-[var(--loom-paper)] uppercase tracking-wider">
               Discovered Facts ({facts.length})
             </span>
@@ -122,7 +125,13 @@ export const FactList: React.FC = () => {
               No facts found matching filter criteria.
             </div>
           ) : (
-            <div className="divide-y divide-[var(--loom-card-border)] max-h-[70vh] overflow-y-auto">
+            <div 
+              data-lenis-prevent
+              tabIndex={0}
+              role="region"
+              aria-label="Discovered Facts List"
+              className="divide-y divide-[var(--loom-card-border)] max-h-[70vh] overflow-y-auto overscroll-contain scrollable-pane focus:outline-none focus:ring-1 focus:ring-[var(--loom-verified)]/30"
+            >
               {facts.map((f) => {
                 const isSelected = selectedFactId === f.id;
                 return (
@@ -163,7 +172,11 @@ export const FactList: React.FC = () => {
         </div>
 
         {/* Fact Detail View (Right) */}
-        <div className="lg:col-span-6 sticky top-24">
+        <div 
+          data-lenis-prevent
+          className="lg:col-span-6 sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto overscroll-contain rounded-lg scrollable-pane focus:outline-none"
+          tabIndex={0}
+        >
           {selectedFactId ? (
             <FactDetailPanel
               factId={selectedFactId}

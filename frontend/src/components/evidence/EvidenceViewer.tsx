@@ -83,9 +83,10 @@ export const EvidenceViewer: React.FC = () => {
   // Navigate to citation target — fires every time a new citation is clicked
   // Uses evidenceTargetVersion as key so same page/doc still triggers update
   useEffect(() => {
-    if (!evidenceTarget) return;
+    const currentTarget = evidenceTarget;
+    if (!currentTarget) return;
 
-    async function applyTarget() {
+    async function applyTarget(tgt: NonNullable<typeof evidenceTarget>) {
       // Always fetch fresh document list so we can resolve even newly-uploaded docs
       let docList = documents;
       if (docList.length === 0) {
@@ -99,24 +100,24 @@ export const EvidenceViewer: React.FC = () => {
 
       // Match doc by id first, then by filename
       const match = docList.find(
-        (d) => d.id === evidenceTarget.documentId || d.filename === evidenceTarget.documentFilename
+        (d) => d.id === tgt.documentId || d.filename === tgt.documentFilename
       );
 
       if (match) {
         setSelectedDocId(match.id);
-      } else if (evidenceTarget.documentId) {
+      } else if (tgt.documentId) {
         // documentId not yet in list (possible if docs loaded before upload finished)
-        setSelectedDocId(evidenceTarget.documentId);
+        setSelectedDocId(tgt.documentId);
       }
 
       // Unconditionally apply page — no stale-value guard
-      if (evidenceTarget.pageNumber && evidenceTarget.pageNumber >= 1) {
-        setPageNumber(evidenceTarget.pageNumber);
-        setPageInput(String(evidenceTarget.pageNumber));
+      if (tgt.pageNumber && tgt.pageNumber >= 1) {
+        setPageNumber(tgt.pageNumber);
+        setPageInput(String(tgt.pageNumber));
       }
     }
 
-    applyTarget();
+    applyTarget(currentTarget);
   // evidenceTargetVersion increments on every openEvidence() call
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [evidenceTargetVersion]);
@@ -377,7 +378,8 @@ export const EvidenceViewer: React.FC = () => {
           ref={containerRef}
           onKeyDown={handleViewerKeyDown}
           tabIndex={0}
-          className="lg:col-span-3 bg-[var(--loom-card)]/50 border border-[var(--loom-card-border)] rounded-lg overflow-auto shadow-2xl h-[calc(100vh-13.5rem)] min-h-[520px] max-h-[85vh] focus:outline-none focus:ring-1 focus:ring-[var(--loom-verified)]/40 relative"
+          data-lenis-prevent
+          className="lg:col-span-3 bg-[var(--loom-card)]/50 border border-[var(--loom-card-border)] rounded-lg overflow-auto shadow-2xl h-[calc(100vh-13.5rem)] min-h-[520px] max-h-[85vh] focus:outline-none focus:ring-1 focus:ring-[var(--loom-verified)]/40 relative scrollable-pane overscroll-contain"
           title="Document Viewer Canvas (Use arrow keys to navigate pages)"
         >
           {selectedDocId ? (
