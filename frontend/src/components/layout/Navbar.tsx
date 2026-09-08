@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { LoomMark } from '../identity/LoomMark';
 import { Wordmark } from '../identity/Wordmark';
 import { useFactLoomStore, type NavTab } from '../../store/factsStore';
@@ -8,11 +9,33 @@ import {
   Question, 
   ShieldCheck, 
   UploadSimple,
-  SquaresFour
+  SquaresFour,
+  Sun,
+  Moon
 } from '@phosphor-icons/react';
 
 export const Navbar: React.FC = () => {
   const { activeTab, setActiveTab } = useFactLoomStore();
+
+  const [theme, setTheme] = useState<'dark' | 'paper'>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('factloom-theme') as 'dark' | 'paper') || 'dark';
+    }
+    return 'dark';
+  });
+
+  useEffect(() => {
+    if (theme === 'paper') {
+      document.documentElement.setAttribute('data-theme', 'paper');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    localStorage.setItem('factloom-theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'paper' : 'dark'));
+  };
 
   const navItems: { id: NavTab; label: string; icon: React.ReactNode }[] = [
     { id: 'command', label: 'Command', icon: <SquaresFour size={16} /> },
@@ -39,32 +62,55 @@ export const Navbar: React.FC = () => {
           </span>
         </div>
 
-        {/* Navigation items */}
-        <nav className="flex items-center gap-1 overflow-x-auto py-1">
-          {navItems.map((item) => {
-            const isActive = activeTab === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setActiveTab(item.id);
-                  window.location.hash = item.id;
-                }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-body tracking-wide transition-all rounded ${
-                  isActive
-                    ? 'text-[var(--loom-paper)] bg-[var(--loom-surface)] border border-[var(--loom-hairline)] font-medium shadow-sm'
-                    : 'text-[var(--loom-thread)] hover:text-[var(--loom-paper)] hover:bg-[var(--loom-surface)]/50'
-                }`}
-              >
-                <span className={isActive ? 'text-[var(--loom-verified)]' : 'text-[var(--loom-thread)]'}>
-                  {item.icon}
-                </span>
-                <span>{item.label}</span>
-              </button>
-            );
-          })}
-        </nav>
+        {/* Navigation items + Theme Toggle */}
+        <div className="flex items-center gap-2">
+          <nav className="flex items-center gap-1 overflow-x-auto py-1">
+            {navItems.map((item) => {
+              const isActive = activeTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setActiveTab(item.id);
+                    window.location.hash = item.id;
+                  }}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-body tracking-wide transition-all rounded ${
+                    isActive
+                      ? 'text-[var(--loom-paper)] bg-[var(--loom-surface)] border border-[var(--loom-hairline)] font-medium shadow-sm'
+                      : 'text-[var(--loom-thread)] hover:text-[var(--loom-paper)] hover:bg-[var(--loom-surface)]/50'
+                  }`}
+                >
+                  <span className={isActive ? 'text-[var(--loom-verified)]' : 'text-[var(--loom-thread)]'}>
+                    {item.icon}
+                  </span>
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Warm Paper / Velvet Dark Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle visual theme"
+            title={theme === 'dark' ? "Switch to Warm Ledger Paper theme" : "Switch to Velvet Slate Dark theme"}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 ml-1 text-xs font-mono-tabular tracking-wide transition-all rounded border border-[var(--loom-card-border)] bg-[var(--loom-surface)] text-[var(--loom-thread)] hover:text-[var(--loom-paper)] hover:border-[var(--loom-verified)]/40 cursor-pointer shadow-sm select-none"
+          >
+            {theme === 'dark' ? (
+              <>
+                <Moon size={14} className="text-[var(--loom-thread)]" />
+                <span className="text-[10px] uppercase font-bold tracking-wider">Dark</span>
+              </>
+            ) : (
+              <>
+                <Sun size={14} className="text-[#B45309]" />
+                <span className="text-[10px] uppercase font-bold tracking-wider text-[#1B1B18]">Paper</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </header>
   );
 };
+

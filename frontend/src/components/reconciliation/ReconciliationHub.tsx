@@ -38,8 +38,10 @@ export const ReconciliationHub: React.FC = () => {
       dimension: 'ROUNDING + UNIT_MISMATCH',
       subtitle: 'Annual Report ₹1,266.41M vs Earnings Deck ₹127Cr (0.283% delta)',
       filter: (r: Relationship) => {
-        const t = r.relationship_type || r.type;
-        return t === 'SAME_AS' || Boolean(r.value_a?.includes('1,266.41') || r.value_b?.includes('127'));
+        return Boolean(
+          (r.value_a?.includes('1,266.41') || r.value_b?.includes('1,266.41')) &&
+          (r.value_a?.includes('127') || r.value_b?.includes('127') || r.doc_a?.includes('deck') || r.doc_b?.includes('deck') || r.doc_a?.includes('presentation') || r.doc_b?.includes('presentation'))
+        );
       },
     },
     {
@@ -49,8 +51,10 @@ export const ReconciliationHub: React.FC = () => {
       dimension: 'UNKNOWN',
       subtitle: 'Deck 33,250 vs AR 33,278 (0.084% discrete count divergence)',
       filter: (r: Relationship) => {
-        const t = r.relationship_type || r.type;
-        return t === 'UNRESOLVED' || Boolean(r.value_a?.includes('33,2') || r.value_b?.includes('33,2'));
+        return Boolean(
+          r.value_a?.includes('33,2') || r.value_b?.includes('33,2') ||
+          r.quote_a?.includes('33,2') || r.quote_b?.includes('33,2')
+        );
       },
     },
     {
@@ -60,8 +64,9 @@ export const ReconciliationHub: React.FC = () => {
       dimension: 'REPORTING_VINTAGE',
       subtitle: '2022 Prospectus nominee superseded by Aug 24, 2023 cessation',
       filter: (r: Relationship) => {
-        const t = r.relationship_type || r.type;
-        return t === 'SUPERSEDES' || Boolean(r.quote_a?.toLowerCase().includes('sujan') || r.quote_b?.toLowerCase().includes('sujan'));
+        return Boolean(
+          r.quote_a?.toLowerCase().includes('sujan') || r.quote_b?.toLowerCase().includes('sujan')
+        );
       },
     },
     {
@@ -71,8 +76,10 @@ export const ReconciliationHub: React.FC = () => {
       dimension: 'ESTIMATE_VS_ACTUAL',
       subtitle: '6.4% First Advance Estimate updated by 6.5% Official Release',
       filter: (r: Relationship) => {
-        const t = r.relationship_type || r.type;
-        return t === 'RECONCILED_BY' || Boolean(r.value_a?.includes('6.4') || r.value_b?.includes('6.5'));
+        return Boolean(
+          r.value_a?.includes('6.4') || r.value_b?.includes('6.5') ||
+          r.quote_a?.includes('6.4') || r.quote_b?.includes('6.5')
+        );
       },
     },
     {

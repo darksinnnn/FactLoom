@@ -26,7 +26,7 @@ def is_generic_entity(entity_str: Optional[str]) -> bool:
     if not entity_str:
         return True
     s = entity_str.strip().lower()
-    if s in GENERIC_ENTITY_NAMES:
+    if s in GENERIC_ENTITY_NAMES or s.endswith('.pdf') or s.endswith('.txt') or '/' in s or '\\' in s:
         return True
     generic_keywords = [
         "not named", "not specified", "not mentioned", "unnamed", 
