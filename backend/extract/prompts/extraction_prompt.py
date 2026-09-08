@@ -17,10 +17,12 @@ EXTRACTION GUIDELINES:
 3. CRITICAL FIELD ISOLATION:
    - NEVER append or fold reporting periods, years, quarters, dates, or vintages (such as "FY24", "FY23", "Q4", "2024", "March 31") into `metric_mention`. All temporal qualifiers MUST be kept strictly isolated inside `period_mention`.
    - NEVER fold units, currencies, or scale symbols into `metric_mention`. Keep all unit qualifiers strictly isolated inside `unit`.
+   - NEVER extract geographic regions, territories, or business segment/division labels (such as "North Region", "Overseas Division", "Segment A") as `metric_mention`. Regional, geographic, and divisional slices MUST be captured in `scope_mention`, with the underlying business measure (e.g. "Net sales", "Revenue", "Operating income") captured in `metric_mention`.
 4. When a table reports multiple periods or columns (e.g. full-year annual totals, prior years, or quarters), extract the full-year / latest period figures for all line items across the entire table.
 5. Separate adjacent but distinct line items (for instance, operational service revenue vs total income).
 6. Preserve numerical precision in `value` exactly as stated (do not round or abbreviate).
 7. Identify the reporting entity in `entity_mention`, the temporal anchor in `period_mention`, and the scope in `scope_mention`.
+
 
 OUTPUT FORMAT:
 Return a valid JSON object matching this structure:

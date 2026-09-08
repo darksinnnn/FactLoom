@@ -115,3 +115,110 @@ def test_registry_decisions_logs_model_used(tmp_path):
         assert r[3] is not None and len(r[3]) > 0
         assert r[3] in ["deterministic", "openai/gpt-oss-120b", "qwen/qwen3.8-27b", "openai/gpt-oss-20b"]
 
+def test_separate_metric_and_scope_disentangles_geographic_segments():
+    from backend.canonicalize.fact_service import separate_metric_and_scope
+
+    # Segment table: (1) Net sales by reportable segment
+    m, s = separate_metric_and_scope(
+        metric_mention="Americas",
+        scope_mention=None,
+        definition_mention="(1) Net sales by reportable segment",
+        claim_text="Net sales in the Americas segment are $162,560."
+    )
+    assert m == "Net sales"
+    assert s == "Americas"
+
+    m2, s2 = separate_metric_and_scope(
+        metric_mention="Europe",
+        scope_mention=None,
+        definition_mention="(1) Net sales by reportable segment",
+        claim_text="Net sales in Europe are 94,294."
+    )
+    assert m2 == "Net sales"
+    assert s2 == "Europe"
+
+    # Standalone EPS modifier contextualization
+    m3, s3 = separate_metric_and_scope(
+        metric_mention="Diluted",
+        scope_mention=None,
+        definition_mention="Shares used in computing earnings per share",
+        claim_text="Diluted shares total 15,812,547."
+    )
+    assert m3 == "Diluted shares"
+
+def test_dynamic_failover_to_qwen_on_429(tmp_path, monkeypatch):
+    """
+    Simulates a 429 rate limit with retry-after on primary model (gpt-oss-120b),
+    verifying automatic dynamic failover to qwen3.8-27b and model provenance logging.
+    """
+    import json
+    import httpx
+    from backend.extract.client import GroqClient
+
+    call_models = []
+
+    class MockResponse:
+        def __init__(self, status_code, json_data, headers=None):
+            self.status_code = status_code
+            self._json = json_data
+            self.headers = headers or {}
+            self.text = json.dumps(json_data)
+
+        def json(self):
+            return self._json
+
+    def mock_post(url, headers=None, json=None):
+        requested_model = json.get("model")
+        call_models.append(requested_model)
+        if "120b" in requested_model:
+            # Return 429 rate limit with retry-after
+            return MockResponse(
+                429,
+                {"error": {"message": "Rate limit exceeded. Please try again in 6.0s"}},
+                {"retry-after": "6.0"}
+            )
+        else:
+            # Fallback model succeeds
+            return MockResponse(
+                200,
+                {
+                    "model": requested_model,
+                    "choices": [{
+                        "message": {
+                            "content": '{"decision": "new_entry", "matched_id": null, "canonical_name": "Operating Metric X", "reason": "Distinct operational metric"}'
+                        }
+                    }]
+                }
+            )
+
+    monkeypatch.setattr(httpx.Client, "post", lambda self, url, headers=None, json=None: mock_post(url, headers, json))
+
+    client = GroqClient(api_key="mock_key")
+    res = client.chat_completion(
+        messages=[{"role": "user", "content": "Adjudicate metric"}],
+        model_role="canonicalizer_fast",
+        response_json=True
+    )
+
+    assert "qwen/qwen3.8-27b" in call_models, f"Expected qwen/qwen3.8-27b in calls, got {call_models}"
+    assert res.get("_model_used") == "qwen/qwen3.8-27b"
+
+    # End-to-end through RegistryEngine to verify model_used persistence in registry_decisions
+    db_file = str(tmp_path / "test_failover_db.db")
+    engine = RegistryEngine(db_path=db_file, groq_client=client)
+
+    # Force middle-band adjudication
+    # Pre-populate an initial metric to compare against
+    engine.resolve_metric("Standard Revenue")
+    # A candidate that lands in the middle band (sim ~0.7-0.8)
+    engine.resolve_metric("Operating Inflow", context="Context")
+
+    import sqlite3
+    c = sqlite3.connect(db_file)
+    qwen_rows = c.execute("SELECT mention_text, decision_type, model_used FROM registry_decisions WHERE model_used = 'qwen/qwen3.8-27b'").fetchall()
+    c.close()
+
+    assert len(qwen_rows) > 0, "Expected registry_decisions to contain a row with model_used = 'qwen/qwen3.8-27b'"
+    assert qwen_rows[0][2] == "qwen/qwen3.8-27b"
+
+

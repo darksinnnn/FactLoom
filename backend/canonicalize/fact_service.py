@@ -74,22 +74,77 @@ def normalize_period(period_str: Optional[str]) -> str:
     return p
 
 def normalize_scope(scope_str: Optional[str]) -> str:
-    """Standardize scope mention to Consolidated, Standalone, Segment, or National."""
+    """Standardize scope mention to Consolidated, Standalone, Segment, or specific Geographic scope."""
     if not scope_str:
         return "Consolidated"
     s = scope_str.strip().lower()
+    if s in ["consolidated", "standalone", "national", "country"]:
+        return s.title()
     if "standalone" in s:
         return "Standalone"
-    if "segment" in s:
-        return "Segment"
+    if "consolidated" in s:
+        return "Consolidated"
     if "national" in s or "country" in s:
         return "National"
     # If the scope string contains date or period markers, it was misplaced by LLM
     if re.search(r'\b(?:fy|q[1-4]|20\d{2})\b', s):
         return "Consolidated"
-    if "consolidated" in s:
-        return "Consolidated"
     return scope_str.strip().title()
+
+def separate_metric_and_scope(
+    metric_mention: str,
+    scope_mention: Optional[str],
+    definition_mention: Optional[str],
+    claim_text: Optional[str]
+) -> Tuple[str, Optional[str]]:
+    """
+    Disentangles scope qualifiers (geographic regions, product categories, business segments)
+    that were extracted as bare metric mentions.
+    Ensures segment reporting rows (e.g. 'Americas', 'Europe') are captured as scope
+    on the underlying metric (e.g. 'Net sales'), preventing metric registry bloat.
+    """
+    m_raw = metric_mention.strip()
+    s_raw = scope_mention.strip() if scope_mention else None
+    d_raw = definition_mention.strip() if definition_mention else ""
+    c_raw = claim_text.strip() if claim_text else ""
+
+    # 1. Check if definition_mention indicates a segment/breakdown table:
+    # e.g., "(1) Net sales by reportable segment", "Revenue by geography", "Sales by region"
+    m_def = re.search(
+        r'(?:^|\(\d+\)\s*)([A-Za-z\s]+?)\s+by\s+(?:reportable\s+)?(?:segment|geography|region|country|division|product)',
+        d_raw,
+        re.IGNORECASE
+    )
+    if m_def:
+        parent_metric = m_def.group(1).strip()
+        # If the metric mention is not the parent metric itself, the mention is the segment label!
+        if parent_metric.lower() not in m_raw.lower():
+            return parent_metric, (s_raw or m_raw)
+
+    # 2. Known geographic, regional, and segmental patterns
+    GEOGRAPHIC_SEGMENTS = {
+        "americas", "europe", "greater china", "china", "japan",
+        "rest of asia pacific", "asia pacific", "apac", "emea",
+        "north america", "south america", "latin america",
+        "united states", "international", "domestic"
+    }
+    if m_raw.lower() in GEOGRAPHIC_SEGMENTS or re.match(r'^(?:segment|division)\s+[a-z0-9]+$', m_raw, re.IGNORECASE):
+        inferred_metric = "Net sales"
+        m_claim = re.search(r'([A-Za-z\s]+?)\s+(?:in|for)\s+(?:the\s+)?(?:' + re.escape(m_raw) + r'|\w+\s+segment)', c_raw, re.IGNORECASE)
+        if m_claim and len(m_claim.group(1).strip().split()) <= 4:
+            cand_metric = m_claim.group(1).strip()
+            if any(w in cand_metric.lower() for w in ["sales", "revenue", "income", "profit", "margin", "earnings"]):
+                inferred_metric = cand_metric
+
+        return inferred_metric, (s_raw or m_raw)
+
+    # 3. Contextualize standalone EPS modifier rows (Basic / Diluted share counts)
+    if m_raw.lower() in {"basic", "diluted"}:
+        if "share" in c_raw.lower() or "share" in d_raw.lower():
+            return f"{m_raw} shares", s_raw
+
+    return m_raw, s_raw
+
 
 def normalize_definition(definition_str: Optional[str], metric: str, period: str) -> str:
     """
@@ -159,9 +214,16 @@ class FactService:
                     if document_id not in self._doc_primary_entities and not is_generic_entity(raw_entity):
                         self._doc_primary_entities[document_id] = entity_mention
 
-                metric_mention = cand.get("metric_mention") or "Unknown Metric"
-                unit = cand.get("unit")
+                raw_metric = cand.get("metric_mention") or "Unknown Metric"
+                raw_scope = cand.get("scope_mention")
+                raw_def = cand.get("definition_mention")
                 claim_text = cand.get("claim_text")
+                unit = cand.get("unit")
+
+                # Disentangle scope and metric conflation
+                metric_mention, separated_scope = separate_metric_and_scope(
+                    raw_metric, raw_scope, raw_def, claim_text
+                )
 
                 # Step 1: Resolve Entity and Metric via Registry
                 entity_id, canonical_entity = self.registry.resolve_entity(
@@ -177,9 +239,10 @@ class FactService:
 
                 # Step 2: Normalize dimensions
                 period = normalize_period(cand.get("period_mention"))
-                scope = normalize_scope(cand.get("scope_mention"))
+                scope = normalize_scope(separated_scope or raw_scope)
                 measurement_type = cand.get("measurement_type") or "flow"
-                definition = normalize_definition(cand.get("definition_mention"), canonical_metric, period)
+                definition = normalize_definition(raw_def, canonical_metric, period)
+
 
                 # Step 3: Find or Create Fact Identity
                 fact_row = conn.execute("""

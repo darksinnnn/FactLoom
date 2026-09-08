@@ -100,14 +100,15 @@ class GroqClient:
                         except Exception:
                             pass
 
-                        # If rate limit wait is large, fall back to alternative model
-                        if retry_after > 20.0:
+                        # If rate limit wait is significant or on second retry attempt, fall back to alternative model
+                        if retry_after > 5.0 or attempt >= 1:
                             alt_model = "qwen/qwen3.8-27b" if "120b" in payload.get("model", "") else "openai/gpt-oss-120b"
                             if payload.get("model") != alt_model:
-                                logger.warning(f"Large wait ({retry_after:.1f}s) on {payload.get('model')}. Falling back immediately to {alt_model}...")
+                                logger.warning(f"429 rate limit hit on {payload.get('model')} (retry_after={retry_after:.1f}s, attempt={attempt+1}). Falling back immediately to {alt_model}...")
                                 payload["model"] = alt_model
-                                time.sleep(1.0)
+                                time.sleep(0.5)
                                 continue
+
 
                         wait_time = max(delay, retry_after) + 1.0
                         logger.warning(f"Groq 429 rate limit hit. Waiting {wait_time:.2f}s before retry (attempt {attempt+1}/{max_retries})...")
